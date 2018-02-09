@@ -1,0 +1,56 @@
+2017-05-25 01:23:24: Setting variables
+2017-05-25 01:23:24: Checking standby conditions
+2017-05-25 01:23:26: Starting substrate rotation
+2017-05-25 01:23:27: Opening arsenic cracker valve and shutter
+2017-05-25 01:23:29: Waiting 180s
+2017-05-25 01:26:29: Checking pressure
+2017-05-25 01:26:30: Pressure looks good.
+2017-05-25 01:26:30: Converging with BFM for As pressure in GaAs growth
+2017-05-25 01:26:30: Converging with BFM to 5e-06
+2017-05-25 01:26:30: Moving BFM in
+2017-05-25 01:26:30: Waiting 30s
+2017-05-25 01:27:00: BFM inserted
+2017-05-25 01:27:02: Waiting 30s
+2017-05-25 01:27:32: Measuring BFM pressure
+2017-05-25 01:28:13: Precision reached! Error = +/-0.00%
+2017-05-25 01:28:13: BFM=5.128614e-06+/-8.47032947254e-22, MBE=4.84666666667e-08+/-4.9888765157e-10
+2017-05-25 01:28:14: Adjusting calibration curve by -1.29e-07
+2017-05-25 01:28:14: Set As valve to 50.57
+2017-05-25 01:28:14: Waiting 30s
+2017-05-25 01:28:44: Measuring BFM pressure
+2017-05-25 01:29:25: Precision reached! Error = +/-1.15%
+2017-05-25 01:29:25: BFM=5.06635053333e-06+/-5.82421399949e-08, MBE=4.90666666667e-08+/-2.49443825785e-10
+2017-05-25 01:29:27: Adjusting calibration curve by -6.64e-08
+2017-05-25 01:29:27: Set As valve to 50.12
+2017-05-25 01:29:27: Waiting 30s
+2017-05-25 01:29:57: Measuring BFM pressure
+2017-05-25 01:30:38: Precision reached! Error = +/-1.02%
+2017-05-25 01:30:38: BFM=4.9282106e-06+/-5.04485163611e-08, MBE=4.93666666667e-08+/-4.81894409827e-10
+2017-05-25 01:30:40: Adjusting calibration curve by 7.18e-08
+2017-05-25 01:30:40: Set As valve to 50.61
+2017-05-25 01:30:40: Moving BFM out
+2017-05-25 01:30:40: Waiting 30s
+2017-05-25 01:31:10: BFM retracted
+2017-05-25 01:31:10: Ramping to degassing temperature
+2017-05-25 01:31:12: Ramping up Ga and In sources
+2017-05-25 01:31:15: Waiting to reach Manip temperature of 750.00
+2017-05-25 01:31:16: Waiting 656s
+2017-05-25 01:42:32: Temp reached! Current T = 749.09+/-0.29
+2017-05-25 01:42:32: Starting timer.
+2017-05-25 01:42:32: Waiting 600 seconds, of which 0.00s already elapsed.
+2017-05-25 01:52:32: Timer is up!
+2017-05-25 01:52:32: Going to GaAs growth conditions, setting manip to 750
+2017-05-25 01:52:34: Waiting to reach Manip temperature of 750.00
+2017-05-25 01:52:34: Temp reached! Current T = 750.00
+2017-05-25 01:52:34: Opening Ga shutter and waiting growth time
+2017-05-25 01:52:35: Waiting 1800s
+2017-05-25 02:22:35: Ramping down Ga
+2017-05-25 02:22:36: Ramping down Manipulator
+2017-05-25 02:22:37: Waiting to reach Manip temperature of 300.00
+2017-05-25 02:22:38: Waiting 267s
+2017-05-25 02:31:29: Temp reached! Current T = 302.77+/-0.92
+2017-05-25 02:31:29: Temperature reached 300, closing As valve and shutter
+2017-05-25 02:31:31: Stopping substrate rotation
+2017-05-25 02:31:46: Waiting 600s
+2017-05-25 02:41:46: Recipe Done.
+2017-05-25 02:41:46: Exiting cleanly...

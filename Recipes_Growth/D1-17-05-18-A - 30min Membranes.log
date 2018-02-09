@@ -1,0 +1,31 @@
+2017-05-18 15:53:34: Setting variables
+2017-05-18 15:53:34: Checking standby conditions
+2017-05-18 15:53:37: Starting substrate rotation
+2017-05-18 15:53:38: Opening arsenic cracker valve and shutter
+2017-05-18 15:53:40: Waiting 180s
+2017-05-18 15:56:42: Checking pressure
+2017-05-18 15:56:43: Pressure looks good.
+2017-05-18 15:56:43: Ramping to degassing temperature
+2017-05-18 15:56:45: Ramping up Ga and In sources
+2017-05-18 15:56:46: Waiting to reach Manip temperature of 750.00
+2017-05-18 15:56:47: Waiting 656s
+2017-05-18 16:08:05: Temp reached! Current T = 749.09+/-0.40
+2017-05-18 16:08:05: Starting timer.
+2017-05-18 16:08:05: Waiting 1800 seconds, of which 0.00s already elapsed.
+2017-05-18 16:38:05: Timer is up!
+2017-05-18 16:38:05: Going to GaAs growth conditions, setting manip to 750
+2017-05-18 16:38:06: Waiting to reach Manip temperature of 750.00
+2017-05-18 16:38:07: Waiting -2s
+2017-05-18 16:38:20: Temp reached! Current T = 749.98+/-0.04
+2017-05-18 16:38:20: Opening Ga shutter and waiting growth time
+2017-05-18 16:38:20: Waiting 1800s
+2017-05-18 17:08:42: Ramping down Ga
+2017-05-18 17:08:43: Ramping down Manipulator
+2017-05-18 17:08:44: Waiting to reach Manip temperature of 300.00
+2017-05-18 17:08:45: Waiting 266s
+2017-05-18 17:17:54: Temp reached! Current T = 302.80+/-0.89
+2017-05-18 17:17:54: Temperature reached 300, closing As valve and shutter
+2017-05-18 17:17:57: Stopping substrate rotation
+2017-05-18 17:18:12: Waiting 600s
+2017-05-18 17:28:19: Recipe Done.
+2017-05-18 17:28:19: Exiting cleanly...

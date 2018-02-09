@@ -1,0 +1,29 @@
+2017-05-24 21:12:57: Setting variables
+2017-05-24 21:12:57: Checking standby conditions
+2017-05-24 21:13:00: Starting substrate rotation
+2017-05-24 21:13:00: Opening arsenic cracker valve and shutter
+2017-05-24 21:13:02: Waiting 180s
+2017-05-24 21:16:02: Checking pressure
+2017-05-24 21:16:03: Pressure looks good.
+2017-05-24 21:16:03: Converging with BFM for As pressure in GaAs growth
+2017-05-24 21:16:03: Converging with BFM to 5e-06
+2017-05-24 21:16:03: Moving BFM in
+2017-05-24 21:16:03: Waiting 30s
+2017-05-24 21:16:33: Exiting cleanly...
+2017-05-24 21:16:45: Moving BFM out
+2017-05-24 21:16:45: Waiting 30s
+2017-05-24 21:36:23: Setting variables
+2017-05-24 21:36:23: Checking standby conditions
+2017-05-24 21:36:26: Starting substrate rotation
+2017-05-24 21:36:27: Opening arsenic cracker valve and shutter
+2017-05-24 21:36:29: Waiting 180s
+2017-05-24 21:39:29: Checking pressure
+2017-05-24 21:39:29: Pressure looks good.
+2017-05-24 21:39:29: Converging with BFM for As pressure in GaAs growth
+2017-05-24 21:39:29: Converging with BFM to 5e-06
+2017-05-24 21:39:29: Moving BFM in
+2017-05-24 21:39:29: Waiting 30s
+2017-05-24 21:40:00: Exiting cleanly...
+2017-05-24 21:40:12: Moving BFM out
+2017-05-24 21:40:12: Waiting 30s
+2017-05-24 21:40:42: BFM retracted
