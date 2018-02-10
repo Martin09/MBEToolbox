@@ -40,10 +40,15 @@ class Calibration:
         else:
             self.x_col = '{:s}Temp'.format(self.mat)
         self.spline_interp_inv = None
+
+        calib_path = '//MBESERVER/Documents/Calibrations_D1/'
+        if not ntpath.exists(calib_path):  # if calibration files on server are not available
+            calib_path = '../Calibration_Data/BFM_vs_CellT/'  # use local calibration files
+
         if filename is None:
-            filepath = self.get_latest_file(directory='//MBESERVER/Documents/Calibrations_D1/')
+            filepath = self.get_latest_file(directory=calib_path)
         else:
-            filepath = '//MBESERVER/Documents/Calibrations_D1/' + filename
+            filepath = calib_path + filename
         self.directory, self.filename = ntpath.split(filepath)
         self.bfm_data = self.read_bfm_file(filepath)
         self.spline_interp = self.make_interpolator(self.bfm_data)
@@ -62,11 +67,15 @@ class Calibration:
         :param fn_rheed: filename of the rheed file we want
         :return: rheed calibration dataframe
         """
+        bfm_path = '//MBESERVER/Documents/Calibrations_D1/Martin/RHEED_vs_BFM/'
+        if not ntpath.exists(bfm_path):  # if calibration files on server are not available
+            bfm_path = '../Calibration_Data/RHEED_vs_BFM/'  # use local calibration files
+
         if fn_rheed:
-            rheed_data = self.read_rheed_file(fn_rheed)
+            rheed_path = bfm_path+fn_rheed
         else:
             rheed_path = self.get_latest_file(
-                directory='//MBESERVER/Documents/Calibrations_D1/Martin/RHEED_vs_BFM/' + self.mat)
+                directory=bfm_path + self.mat)
         return self.read_rheed_file(rheed_path)
 
     def read_bfm_file(self, filename):
@@ -107,7 +116,7 @@ class Calibration:
         data = data.iloc[:, 0:3]  # Remove the standard deviation columns (5 and 6), if they exist
         return data
 
-    def get_latest_file(self, directory='CalibrationFiles/'):
+    def get_latest_file(self, directory='Calibration_Data/'):
         """
         Get latest calibration file. Automatically pulls up latest file from the given directory
 

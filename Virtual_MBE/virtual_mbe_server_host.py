@@ -77,7 +77,8 @@ class MBERequestHandler(SocketServer.BaseRequestHandler):
                 return 'Error!'
         elif '#plot_log' in command:
             fn = words[1] if len(words) > 1 else None
-            if self.server.mbe.plot_recipe(filename=fn):
+            folder = "../Virtual_MBE_Output/"
+            if self.server.mbe.plot_recipe(filename=fn, directory=folder):
                 return 'OK.'
             else:
                 return 'Error!'
@@ -173,8 +174,9 @@ class VirtualMBE:
                           'ascracker.pv': 600, 'ascracker.pv.rate': 2, 'ascracker.pv.tsp': 600,
                           'ascracker.op': 0.0, 'ascracker.op.rate': 0, 'ascracker.op.tsp': 0, 'ascracker.mode': 'pid',
                           'ascracker.valve.op': 0,
-                          'sbcracker.pv': 800, 'sbcracker.pv.rate': 10, 'sbcracker.op.tsp': 0, 'sbcracker.pv.tsp': 800,
-                          'sbcracker.op': 0.0, 'sbcracker.op.rate': 0, 'sbcracker.mode': 'pid',
+                          'sbcracker.pv': 800, 'sbcracker.pv.rate': 2, 'sbcracker.pv.tsp': 800,
+                          'sbcracker.op': 0.0, 'sbcracker.op.rate': 0, 'sbcracker.op.tsp': 0, 'sbcracker.mode': 'pid',
+                          'sbcracker.valve.op': 0,
                           'sbcond.pv': 800, 'sbcond.pv.rate': 10, 'sbcond.op.tsp': 0, 'sbcond.pv.tsp': 800,
                           'sbcond.op': 0.0, 'sbcond.op.rate': 0, 'sbcond.mode': 'pid',
                           'suko.pv': 0, 'suko.pv.rate': 0, 'suko.pv.tsp': 0,
@@ -313,7 +315,7 @@ class VirtualMBE:
             self.do_timestep()
         return True
 
-    def plot_recipe(self, data_frame=None, show=False, filename=None):
+    def plot_recipe(self, data_frame=None, show=False, filename=None, directory=None):
         """
         Plot the log file so that it can be analyzed. It both saves the pandas dataframe log to a gzipped csv file
         called 'virtual_log_file.csv.zip' and outputs a png of the plot called 'virtual_log_file.png'
@@ -327,9 +329,9 @@ class VirtualMBE:
         """
 
         if filename:
-            savename = ntpath.basename(filename).split('.')[0]
+            savename = directory + ntpath.basename(filename).split('.')[0]
         else:
-            savename = 'virtual_log_file'
+            savename = directory + 'virtual_log_file'
 
         if not self.dataArray and data_frame is None:  # If the array is empty
             print('Error: data_array is empty, need to run the simulation first!')
