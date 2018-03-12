@@ -11,7 +11,7 @@ from MBE_Tools import ServerConnection
 # values = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 # Long calibration
 # values = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100]
-values = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 100]
+values = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 # Randomized order to help eliminate memory from prev measurements,
 # but small openings after large openings are not meaningful... so don't use this
 # values = [30, 80, 25, 50, 35, 15, 100, 45, 5, 70, 40, 10, 90, 20, 60, 0]
@@ -108,8 +108,8 @@ def read_pressures(delay=1, n=20, error=0.05, max_t=60):
 
         sleep(delay)
 
-    p_mbe = np.mean(ps_bfm)
-    p_mbe_std = np.std(ps_bfm)
+    p_mbe = np.mean(ps_mbe)
+    p_mbe_std = np.std(ps_mbe)
 
     print('BFM={}+/-{}, MBE={}+/-{}'.format(p_bfm, p_bfm_std, p_mbe, p_mbe_std))
 

@@ -6,10 +6,9 @@ from recipe_helper import MBERecipe, ts_print
 from mbe_calibration import Calibration
 
 # Indium/III-V ratio series
-# NOTE: InAs growth temp was 15 deg higher than the optimal (Jordi FIB cuts)
 ###########################
-Rate_In = 0.3  # A/s
-P_As = 9.24E-6  # Torr
+Rate_In = 0.1  # A/s
+P_As = 7.8E-6  # Torr
 ###########################
 
 run_virtual_server = False
@@ -39,15 +38,15 @@ if __name__ == '__main__':
         T_In = calib_In.calc_setpoint_gr(Rate_In)  # 0.2 A/s growth rate
         T_Des_Anneal = 650  # Desired pyrometer temperature for anneal
         T_Des_GaAs = 630  # Desired pyrometer temperature for GaAs growth
-        T_Des_InAs = 535  # Desired pyrometer temperature for InAs growth
-        T_Des_Anneal_Manip = T_Des_Anneal + T_delta  # Desired manip temperature (pyro is broken)
-        T_Des_GaAs_Manip = T_Des_GaAs + T_delta  # Desired manip temperature (pyro is broken)
-        T_Des_InAs_Manip = T_Des_InAs + T_delta  # Desired manip temperature for InAs growth
+        T_Des_InAs = 530  # Desired pyrometer temperature for InAs growth
+        T_Des_Anneal_Manip = 760  # Desired manip temperature (pyro is broken)
+        T_Des_GaAs_Manip = 750  # Desired manip temperature (pyro is broken)
+        T_Des_InAs_Manip = 640  # Desired manip temperature for InAs growth
         p_as_gaas = 4E-6  # Desired As pressure for GaAs growth
         p_as_inas = P_As  # Desired As pressure for InAs growth
         as_valve_gaas = calib_As.calc_setpoint(p_as_gaas)
         as_valve_inas = calib_As.calc_setpoint(p_as_inas)
-        t_anneal = 30 * 60  # 30 minutes
+        t_anneal = 10 * 60  # 30 minutes
         t_growth_gaas = 30 * 60  # 30 minutes
         thickness_inas = 4  # nm
         t_growth_inas = thickness_inas * 10 / Rate_In  # Always grow the same thickness of material
