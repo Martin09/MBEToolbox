@@ -2,6 +2,7 @@
 """
 Some functions that help in MBE growth
 """
+#TODO: implement the Sb cell commands!
 from datetime import datetime
 from time import sleep, clock
 
@@ -50,6 +51,7 @@ class MBERecipe:
             self.log_fn = None
 
         self.recipeStarted = False
+        #TODO: turn the manip_offset value into a function which depends on temp (and calibrate it for various holders)
         self.manip_offset = 110  # Used to be 110 before 01/05/2017, before arm crash?
         self.timer_start_time = 0
 
