@@ -120,17 +120,16 @@ class MBERecipe:
         :type value: int, float
         :return: None, returns once the parameter has been set properly
         """
-        # TODO: add a MAX_TEMP check to make sure a cell can't be set too high
         MAX_TEMPS = {'manip.pv.tsp': 850,
                      'in.pv.tsp': 830,
-                     'ga.pv.tsp': 960,
+                     'ga.pv.tsp': 1020,
                      'al.pv.tsp': 1120}
-        if parameter in MAX_TEMPS.keys():
-            if float(value):
+        if parameter.lower() in MAX_TEMPS.keys():
+            if float(value) > MAX_TEMPS[parameter.lower()]:
                 self.ts_print('Tried setting {} to {}, but maximum is {}. Set to max.'.format(parameter, value,
                                                                                               MAX_TEMPS[
-                                                                                                  parameter]))
-                value = MAX_TEMPS[parameter]
+                                                                                                  parameter.lower()]))
+                value = MAX_TEMPS[parameter.lower()]
 
         MAX_TRIES = 10
         tries = 1
@@ -384,7 +383,6 @@ class MBERecipe:
         p_mbe = np.mean(ps_mbe)
         p_mbe_std = np.std(ps_mbe)
 
-        print(ps_bfm)
         self.ts_print('BFM={}+/-{}, MBE={}+/-{}'.format(p_bfm, p_bfm_std, p_mbe, p_mbe_std))
 
         return p_bfm, p_mbe, p_bfm_std, p_mbe_std
@@ -554,7 +552,7 @@ class MBERecipe:
             "In.PV": (510, 520),
             "Ga.PV": (545, 555),
             # "Al.PV": (745, 755), ****************************
-            "As.PV": (374, 410),
+            "As.PV": (360, 410),
             "AsCracker.PV": (595, 905),
             # "Sb.PV": (245, 255),  # Double check this! ****************************
             # "SbCracker.PV": (795, 805),  # Double check this! ****************************
@@ -620,6 +618,28 @@ class MBERecipe:
         # Retract BFM
         self.bfm(insert=False)
 
+    def reinit_cells(self, cell):
+        """
+        Just re-initializes all the parameters in each Eurotherm, seems to solve the problem of having NaN values read
+        from the Eurotherms
+        :param cell:
+        :return:
+        """
+        cells = ['Ga', 'As', 'Sb', 'SUSI', 'SUKO', 'SbCracker', 'SbCond', 'AsCracker']  # Removed In and Al
+        cells = [cell]
+        for cell in [cells[0]]:
+            pv = float(self.get_param("{}.PV".format(cell)))
+            op = float(self.get_param("{}.OP".format(cell)))
+
+            self.set_param("{}.PV.rate".format(cell), 0.1)
+            self.set_param("{}.OP.rate".format(cell), 0.1)
+
+            self.set_param("{}.Mode".format(cell), "Manual")
+            self.set_param("{}.OP.TSP".format(cell), op)
+
+            self.set_param("{}.Mode".format(cell), "Auto")
+            self.set_param("{}.PV.TSP".format(cell), pv)
+
     def get_recipes_running(self):
         """
         Gets the number of recipes currently running
@@ -680,3 +700,5 @@ if __name__ == '__main__':
     from mbe_calibration import Calibration
 
     calib_As = Calibration("As")
+    calib_Ga = Calibration("Ga")
+    calib_Al = Calibration("Al")

@@ -12,7 +12,7 @@ values = np.linspace(830, 770, 7)
 # Long calibration
 # values = np.linspace(830, 770, 13)
 
-t_stabilize = 30  # 30 seconds
+t_stabilize = 300  # 5 minutes
 
 #################################
 # Modify this for each material

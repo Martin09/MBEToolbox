@@ -9,10 +9,9 @@ from time import strftime
 # Very short calibration
 # values = [0, 20, 40, 60, 80, 100]
 # Short calibration
-# values = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+values = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 # Long calibration
-values = [10, 15, 20, 25, 29, 30, 35, 40, 45, 50, 52, 60, 80, 100]
-# values = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 34, 35, 36, 38, 40, 50, 60, 70, 80, 90, 100]
+# values = [10, 15, 20, 25, , 30, 35, 40, 45, 50, 52, 60, 80, 100]
 
 t_stabilize = 30
 t_shutter_stabilize = 30

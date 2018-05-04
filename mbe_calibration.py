@@ -74,8 +74,7 @@ class Calibration:
         if fn_rheed:
             rheed_path = bfm_path+fn_rheed
         else:
-            rheed_path = self.get_latest_file(
-                directory=bfm_path + self.mat)
+            rheed_path = self.get_latest_file(directory=bfm_path + self.mat)
         return self.read_rheed_file(rheed_path)
 
     def read_bfm_file(self, filename):

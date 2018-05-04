@@ -8,11 +8,11 @@ import numpy as np
 # Script takes about 3min per value, would like to keep the total calibration to around 30 min, so 10 values
 
 # Short calibration
-values = np.linspace(960, 900, 7)
+values = np.linspace(1000, 900, 6)
 # Long calibration
 # values = np.linspace(960, 900, 13)
 
-t_stabilize = 30  # 30 seconds
+t_stabilize = 300  # 5 minutes
 
 #################################
 # Modify this for each material
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
         # Write the file headers
         f = open(filename, "a")
-        f.write("{:s}\tBFM.P\tMBE.P\n".format(mat))
+        f.write("{:s}\tBFM.P\tMBE.P\tBFM.P_STD\tMBE.P_STD\n".format(mat))
         f.close()
 
         # Loop over all the values to calibrate
@@ -58,17 +58,17 @@ if __name__ == '__main__':
             mbe.wait_to_reach_temp(value, PID=mat)
 
             if i == 0:
-                ts_print("Stabilizing at first point, waiting 5min.")
-                mbe.waiting(5 * 60)
+                ts_print("Stabilizing at first point, waiting 10min.")
+                mbe.waiting(10 * 60)
 
             mbe.waiting(t_stabilize)
 
             ts_print("Opening shutter and making measurement")
             mbe.shutter(mat, True)  # Open shutter
 
-            pressure, background = mbe.read_pressures(max_t=60, n=30, error=0.01)
+            pressure, background, p_std, b_std = mbe.read_pressures(max_t=60, n=30, error=0.01)
             f = open(filename, "a")
-            f.write("{:.0f}\t{:.6E}\t{:.6E}\n".format(value, pressure, background))
+            f.write("{:.0f}\t{:.6E}\t{:.6E}\t{:.6E}\t{:.6E}\n".format(value, pressure, background, p_std, b_std))
             f.close()
             ts_print("Pressure: " + str(pressure) + " (stored to file)")
 
