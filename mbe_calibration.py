@@ -249,6 +249,25 @@ class Calibration:
 
         return self.calc_setpoint(bfm_pressure)
 
+    def calc_p_arsenic(self, group3_gr, desired_53ratio):
+        """
+        Given the desired V/III ratio and the group III growth rate, returns the required As pressure
+        :param group3_gr: growth rate in A/s of the group III material
+        :param desired_53ratio: desired V/III ratio
+        :return: required pressure in Torr of the As cell
+        """
+        if self.mat.lower() == 'as':
+            return ValueError('Arsenic calibration cannot use GR setpoint!')
+
+        x = self.rheed_data['Rate (A/s)']
+        y = self.rheed_data['BFM.P']
+        p = np.polyfit(x, y, 1)
+
+        bfm_pressure = np.polyval(p, group3_gr)
+
+        return bfm_pressure*desired_53ratio
+
+
     def get_interpolator(self):
         """
         Getter function to get the interpolator function of the calibration

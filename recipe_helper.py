@@ -702,3 +702,4 @@ if __name__ == '__main__':
     calib_As = Calibration("As")
     calib_Ga = Calibration("Ga")
     calib_Al = Calibration("Al")
+    calib_In = Calibration("In")
