@@ -7,8 +7,8 @@ from mbe_calibration import Calibration
 
 # Indium/III-V ratio series
 ###########################
-Rate_In = 0.3  # A/s
-five_three_ratio = 150
+Rate_In = 0.1  # A/s
+five_three_ratio = 190
 ###########################
 
 run_virtual_server = False
@@ -123,6 +123,9 @@ if __name__ == '__main__':
         mbe.shutter("Ga", True)
         mbe.waiting(t_growth_gaas)  # Wait Growth Time
         mbe.shutter("Ga", False)
+
+        ts_print("Ramping down Ga")
+        mbe.set_param("Ga.PV.TSP", 550)
 
         ##############################################################################
         # InAs Nanowire

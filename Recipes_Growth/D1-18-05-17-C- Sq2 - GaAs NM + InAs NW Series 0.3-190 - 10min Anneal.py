@@ -124,6 +124,9 @@ if __name__ == '__main__':
         mbe.waiting(t_growth_gaas)  # Wait Growth Time
         mbe.shutter("Ga", False)
 
+        ts_print("Ramping down Ga")
+        mbe.set_param("Ga.PV.TSP", 550)
+
         ##############################################################################
         # InAs Nanowire
         ##############################################################################
