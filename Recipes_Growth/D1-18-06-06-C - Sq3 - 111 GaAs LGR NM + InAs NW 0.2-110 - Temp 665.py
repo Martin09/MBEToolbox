@@ -5,7 +5,7 @@ Requires the new MBE_Toolbox
 from recipe_helper import MBERecipe, ts_print
 from mbe_calibration import Calibration
 
-run_virtual_server = True
+run_virtual_server = False
 use_pyro = False
 
 # Low GR growth, starting with conditions that I am used to (T=630, P_As=4E-6) and just decreasing Ga rate to 0.3 A/s
@@ -40,7 +40,7 @@ if __name__ == '__main__':
         T_In = calib_In.calc_setpoint_gr(rate_in)  #In temp
         T_Anneal_Manip = 760  # Desired manip temperature (pyro is broken)
         T_GaAs_Manip = 750  # Desired manip temperature (pyro is broken)
-        T_InAs_Manip = 640  # Desired manip temperature for InAs growth
+        T_InAs_Manip = 665  # Desired manip temperature for InAs growth
         p_as_gaas = calib_Ga.calc_p_arsenic(rate_ga, ftr_gaas)  # Desired As pressure for GaAs growth
         as_valve_gaas = calib_As.calc_setpoint(p_as_gaas)
         p_as_inas = calib_In.calc_p_arsenic(rate_in, ftr_inas)  # Desired As pressure for InAs growth
