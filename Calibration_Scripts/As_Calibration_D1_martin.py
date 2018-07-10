@@ -11,7 +11,7 @@ from MBE_Tools import ServerConnection
 # values = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 # Long calibration
 # values = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100]
-values = [20, 30, 40, 60, 80, 90, 100]
+values = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 # Randomized order to help eliminate memory from prev measurements,
 # but small openings after large openings are not meaningful... so don't use this
 # values = [30, 80, 25, 50, 35, 15, 100, 45, 5, 70, 40, 10, 90, 20, 60, 0]
@@ -22,7 +22,7 @@ t_shutter_stabilize = 30
 #################################
 # Modify this for each material
 #################################
-mat = "As"
+mat = "Sb"
 standby_value = 0
 #################################
 
@@ -158,6 +158,8 @@ def ramp_to(setpoint, material, error=0.1):
     """
     if material == "As":
         connection.sendCommand("Set AsCracker.Valve.OP {:.0f}".format(setpoint))
+    elif material == "Sb":
+        connection.sendCommand("Set SbCracker.Valve.OP {:.0f}".format(setpoint))
     else:
         connection.sendCommand("Set " + material + ".PV.TSP {:.0f}".format(setpoint))
 
@@ -165,6 +167,8 @@ def ramp_to(setpoint, material, error=0.1):
         sleep(1)
         if material == "As":
             current = float(connection.getValue("AsCracker.Valve"))
+        elif material == "Sb":
+            current = float(connection.getValue("SbCracker.Valve"))
         else:
             current = float(connection.getValue(material + ".PV"))
         if abs(current - setpoint) <= error:
@@ -220,6 +224,8 @@ if __name__ == '__main__':
     # Go to standby conditions
     if mat == "As":
         connection.sendCommand("Set AsCracker.valve.OP %d" % standby_value)
+    elif mat == "Sb":
+        connection.sendCommand("Set SbCracker.valve.OP %d" % standby_value)
     else:
         connection.sendCommand("Set " + mat + ".PV.TSP %d" % standby_value)
 

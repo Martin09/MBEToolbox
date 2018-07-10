@@ -10,6 +10,7 @@ import numpy as np
 
 from MBE_Tools import ServerConnection
 from Virtual_MBE.virtual_mbe_server_client import Connect
+from SbValveControl import SbValve
 
 
 # from tqdm import tqdm
@@ -44,6 +45,11 @@ class MBERecipe:
             # make a debugging server connection
             self.conn = Connect('localhost', 9999)
             self.conn.send_command('#reset_virt_mbe')
+
+        self.sbValve = SbValve(COM=2)
+
+        if not self.sbValve.working:
+            ts_print("Warning, couldn't connect to Sb valve")
 
         if scriptname:
             self.log_fn = scriptname[:-3] + '.log'
@@ -106,6 +112,9 @@ class MBERecipe:
         :return: value of the parameter, as a string
         :rtype: str
         """
+        if parameter.lower() == 'sbcracker.valve.op':
+            return self.sbValve.getPV()
+
         return self.conn.send_command("Get {}".format(parameter))
 
     def set_param(self, parameter, value, delay=0.1):
@@ -134,16 +143,20 @@ class MBERecipe:
         MAX_TRIES = 10
         tries = 1
         while True:
-            if tries == 1:
-                self.conn.send_command("Set {} {}".format(parameter, value))
+            if parameter.lower() == 'sbcracker.valve.op':
+                self.sbValve.setPV(value)
             else:
-                self.conn.send_command("Set {} {}, attempt {} of {}".format(parameter, value, tries, MAX_TRIES))
+                self.conn.send_command("Set {} {}".format(parameter, value))
+
             sleep(delay)
             if parameter.lower() == 'manip.rs.rpm':
                 srv_reply = self.conn.send_command("Get Manip.RS")
             elif parameter.lower() == 'ascracker.valve.op':
                 sleep(1)  # Give time for As valve to open respond
                 srv_reply = self.conn.send_command('Get AsCracker.Valve')
+            elif parameter.lower() == 'sbcracker.valve.op':
+                sleep(1)  # Give time for Sb valve to respond
+                srv_reply = self.sbValve.getPV()
             else:
                 srv_reply = self.conn.send_command("Get {}".format(parameter))
 

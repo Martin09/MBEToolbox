@@ -9,7 +9,7 @@ from time import strftime
 # Very short calibration
 # values = [0, 20, 40, 60, 80, 100]
 # Short calibration
-values = [0, 10, 20, 25, 30, 35, 40, 50, 60,65, 80, 100]
+values = [0, 10, 20, 25,28,29,30,32, 40, 50, 60,65, 80, 100]
 # Long calibration
 # values = [10, 15, 20, 25, , 30, 35, 40, 45, 50, 52, 60, 80, 100]
 
