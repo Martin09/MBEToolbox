@@ -20,7 +20,7 @@ p_as_gaas = 4.0E-6  # Torr - Will calculate valve opening from this based on lat
 p_as_shell = 1.3E-5  # Torr - Will calculate valve opening from this based on latest BFM calibrations
 ###########################
 
-run_virtual_server = True
+run_virtual_server = False
 
 # If running the script locally:
 if __name__ == '__main__':
