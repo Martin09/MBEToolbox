@@ -566,7 +566,7 @@ class MBERecipe:
             "Ga.PV": (545, 555),
             # "Al.PV": (745, 755), ****************************
             "As.PV": (360, 410),
-            "AsCracker.PV": (595, 905),
+            "AsCracker.PV": (595, 1005),
             # "Sb.PV": (245, 255),  # Double check this! ****************************
             # "SbCracker.PV": (795, 805),  # Double check this! ****************************
             "SUKO.OP": (0, 40),

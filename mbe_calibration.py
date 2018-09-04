@@ -55,6 +55,9 @@ class Calibration:
         self.bfm_plt_axis = None
         self.rheed_data = None
 
+        self.lattice_const_dict = {"ga": 5.6532, "al": 5.6605, "in": 6.0583}  # GaAs/AlAs/InAs in Angstrom
+        self.lattice_const = self.lattice_const_dict.get(material.lower())
+
         if plot:
             self.bfm_plt_axis = self.plot_bfm_data(self.bfm_data, self.filename)
 
@@ -72,7 +75,7 @@ class Calibration:
             bfm_path = '../Calibration_Data/RHEED_vs_BFM/'  # use local calibration files
 
         if fn_rheed:
-            rheed_path = bfm_path+fn_rheed
+            rheed_path = bfm_path + fn_rheed
         else:
             rheed_path = self.get_latest_file(directory=bfm_path + self.mat)
         return self.read_rheed_file(rheed_path)
@@ -259,14 +262,47 @@ class Calibration:
         if self.mat.lower() == 'as':
             return ValueError('Arsenic calibration cannot use GR setpoint!')
 
+        return self.calc_bfm_p(group3_gr) * desired_53ratio
+
+    def calc_bfm_p(self, group3_gr):
+        """
+        Given the group III growth rate, returns the interpolated BFM pressure of the cell
+        :param group3_gr: group three desired growth rate
+        :return: pressure of the cell at the desired growth rate
+        """
+
         x = self.rheed_data['Rate (A/s)']
         y = self.rheed_data['BFM.P']
         p = np.polyfit(x, y, 1)
 
-        bfm_pressure = np.polyval(p, group3_gr)
+        return np.polyval(p, group3_gr)
 
-        return bfm_pressure*desired_53ratio
+    def conv_gr_to_af(self, group3_gr):
+        """
+        Converts the group III growth rate into atomic flux in atoms/m2/s.
+        NOTE: assumes an FCC crystal and that the calibration was done on a 100 substrate!
+        :param group3_gr: growth rate in A/s to be converted to atomic flux
+        :return: atomic flux in atoms/m2/s
+        """
+        if not self.lattice_const:
+            return ValueError("This material doesn't have a defined lattice constant!")
 
+        ml_gr = group3_gr / (self.lattice_const / 2.)  # Convert to monolayer growth rate ML/s
+        return 2. / (self.lattice_const * 1E-10) ** 2. * ml_gr
+
+    # TODO: get the atomic flux calculations working for As as well
+    def conv_af_to_gr(self, atomic_flux):
+        """
+        Converts the atomic flux in atoms/m2/s into group III growth rate
+        NOTE: assumes an FCC crystal and that the calibration was done on a 100 substrate!
+        :param atomic_flux: atomic flux in atoms/m2/s
+        :return: growth rate in A/s
+        """
+        if not self.lattice_const:
+            return ValueError("This material doesn't have a defined lattice constant!")
+
+        ml_gr = atomic_flux / 2. * (self.lattice_const * 1E-10) ** 2.
+        return ml_gr * (self.lattice_const / 2.)  # Convert to angstrom growth rate (A/s)
 
     def get_interpolator(self):
         """
