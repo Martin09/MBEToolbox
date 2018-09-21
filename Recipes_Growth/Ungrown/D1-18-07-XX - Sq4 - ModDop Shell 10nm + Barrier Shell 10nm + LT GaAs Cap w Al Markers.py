@@ -28,7 +28,7 @@ p_as_shell = 1.0E-5  # Torr - Will calculate valve opening from this based on la
 run_virtual_server = True
 
 # If running the script locally:
-if __name__ == '__main__':
+if __name__ == '__main__':sks
     calib_In = Calibration("In")
     calib_Ga = Calibration("Ga")
     calib_As = Calibration("As")

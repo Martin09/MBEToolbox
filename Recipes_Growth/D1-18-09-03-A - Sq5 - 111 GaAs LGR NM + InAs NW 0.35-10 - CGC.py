@@ -10,7 +10,7 @@ use_pyro = False
 
 # Low GR growth, starting with conditions that I am used to (T=630, P_As=4E-6) and just decreasing Ga rate to 0.3 A/s
 # Try InAs with copenhagen growth conditions, no Sb though
-# Cracker is at 950
+# Cracker is at 95011
 ###########################
 rate_ga = 0.3  # A/s
 ftr_gaas = 80  # five three ratio
