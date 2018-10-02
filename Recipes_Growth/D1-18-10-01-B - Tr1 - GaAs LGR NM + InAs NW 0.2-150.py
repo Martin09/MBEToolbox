@@ -15,12 +15,14 @@ use_pyro = False
 # 09-07-A - Using Tr1 holder so increased temps by 40 degrees over square holders
 # 09-07-B - Increased InAs growth temp by 20 degrees to try and get longer, more uniform wires.
 # 09-18-C - Increased V/III ratio from 10 to 100, to see what happens. Should also effectively decrease In diff len.
-# 09-21-X - Decreased InAs growth rate to see if it changes morphology.
+# 09-21-C - Decreased InAs growth rate to see if it changes morphology.
+# 10-01-A - Increased V/III ratio to 150 to try.
+# 10-01-B - Comparison point with 09-A to see if we get the same result on the other holder...
 ###########################
 rate_ga = 0.3  # A/s
 ftr_gaas = 80  # five three ratio
 rate_in = 0.2  # A/s
-ftr_inas = 100  # five three ratio
+ftr_inas = 150  # five three ratio
 ###########################
 
 # If running the script locally:
@@ -34,8 +36,8 @@ if __name__ == '__main__':
         mbe.starting_growth_prompt()
 
         # Check that no other recipes are already running
-        if not mbe.get_recipes_running() == 0:
-            raise Exception("At least one recipe is running!")
+        #if not mbe.get_recipes_running() == 0:
+         #   raise Exception("At least one recipe is running!")
 
         # Increment number of recipes flag and set recipes running to true
         mbe.start_recipe()
@@ -51,7 +53,7 @@ if __name__ == '__main__':
         as_valve_gaas = calib_As.calc_setpoint(p_as_gaas)
         p_as_inas = calib_In.calc_p_arsenic(rate_in, ftr_inas)  # Desired As pressure for InAs growth
         as_valve_inas = calib_As.calc_setpoint(p_as_inas)
-        t_anneal = 10 * 60  # 30 minutes
+        t_anneal = 10 * 60  # 10 minutes
         thickness_gaas = 100  # nm
         t_growth_gaas = thickness_gaas * 10 / rate_ga  # Always grow the same thickness of material
         thickness_inas = 63  # nm
