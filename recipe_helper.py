@@ -2,18 +2,16 @@
 """
 Some functions that help in MBE growth
 """
-#TODO: implement the Sb cell commands!
+# TODO: implement the Sb cell commands!
 from datetime import datetime
-from time import sleep, clock
-
+from time import sleep, clock, time
+from tqdm import trange
 import numpy as np
 
 from MBE_Tools import ServerConnection
 from Virtual_MBE.virtual_mbe_server_client import Connect
 from SbValveControl import SbValve
 
-
-# from tqdm import tqdm
 
 def ts_print(string):
     """
@@ -57,7 +55,7 @@ class MBERecipe:
             self.log_fn = None
 
         self.recipeStarted = False
-        #TODO: turn the manip_offset value into a function which depends on temp (and calibrate it for various holders)
+        # TODO: turn the manip_offset value into a function which depends on temp (and calibrate it for various holders)
         self.manip_offset = 110  # Used to be 110 before 01/05/2017, before arm crash?
         self.timer_start_time = 0
 
@@ -165,7 +163,7 @@ class MBERecipe:
             elif isinstance(value, str):
                 set_properly = value.lower() == srv_reply.lower()  # Do direct string comparison
                 if (value.lower() == 'auto') and (
-                            srv_reply.lower() == 'pid'):  # Quick and dirty fix for problem when running virtual MBE server host
+                        srv_reply.lower() == 'pid'):  # Quick and dirty fix for problem when running virtual MBE server host
                     set_properly = True  # TODO: fix this hack properly on the side of the MBE server
             elif isinstance(value, int) or isinstance(value, float):
                 set_properly = abs(float(value) - float(srv_reply)) <= 0.1  # Convert to float and do comparison
@@ -276,7 +274,7 @@ class MBERecipe:
         self.ts_print("Temperature reached, opening As valve and shutter")
         self.set_param("AsCracker.Valve.OP", 100)
         self.shutter("As", True)
-        self.ts_print("Waiting capping time: {} min".format(capping_time))
+        self.ts_print("Waiting capping time: {:.2f} min".format(capping_time))
         self.waiting(capping_time_sec)
         self.ts_print("Closing As valve and shutter")
         self.shutter("As", False)
@@ -470,7 +468,7 @@ class MBERecipe:
 
         return optimized_as_opening
 
-    def wait_to_reach_temp(self, temp, PID='Manip', error=1, n=10, timeout_on=True):
+    def wait_to_reach_temp(self, temp=None, PID='Manip', error=1, n=10, timeout_on=True):
         """
         Wait until mbe manipulator or one of the cells reaches a certain temperature
 
@@ -485,6 +483,10 @@ class MBERecipe:
             start_time = float(self.conn.send_command('Get time'))
         else:
             start_time = clock()
+
+        # If no temp was passed to the function, wait until current setpoint is reached
+        if not temp:
+            temp = float(self.get_param("{:s}.PV.TSP".format(PID)))
 
         self.ts_print("Waiting to reach {:s} temperature of {:.2f}".format(PID, temp))
         if not timeout_on:
@@ -531,7 +533,7 @@ class MBERecipe:
                     self.ts_print('Timeout reached! Current T = {:.2f}+/-{:.2f}'.format(t_current, t_current_std))
                     break
 
-    def waiting(self, time, verbose=True):
+    def waiting(self, wait_time, verbose=True):
         """
         Waits a certain amount of time before continuing, gets rounded down to nearest second. TIP: can use instead the
         timer_start and timer_wait functions for more robust timing (in some cases).
@@ -543,14 +545,16 @@ class MBERecipe:
         # TODO: Add a shorter wait during debugging mode of a recipe
 
         if verbose:
-            self.ts_print("Waiting {}s".format(time))
+            self.ts_print("Waiting {}s".format(wait_time))
         if self.virtual_server:
-            self.conn.send_command('Wait {}'.format(time))
+            self.conn.send_command('Wait {}'.format(wait_time))
         else:  # Normal recipe
-            for i in xrange(int(round(time))):
-                #        if not remainder(i,100):
-                #            tsPrint "%ds left"%(time-i/10.)
+            for i in xrange(int(round(wait_time))):
                 sleep(1.0)
+
+            # for _ in trange(0, int(round(wait_time)), desc='Waiting', ascii=True):
+            # for _ in range(0, int(round(wait_time))):
+            #     sleep(1 - time() % 1)  # sleep until a whole second boundary
 
     def check_stdby(self):
         """
@@ -714,5 +718,7 @@ if __name__ == '__main__':
 
     calib_As = Calibration("As")
     calib_Ga = Calibration("Ga")
-    calib_Al = Calibration("Al")
+    # calib_Al = Calibration("Al")
     calib_In = Calibration("In")
+
+    mbe.decrement_recipes_running()

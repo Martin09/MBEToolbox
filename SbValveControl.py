@@ -106,5 +106,5 @@ class SbValve():
 
 #For testing:
 if __name__ == '__main__':
-    valve = SbValve(COM=2)
+    valve = SbValve(COM=3)
     print valve.getPV()
