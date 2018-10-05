@@ -721,4 +721,4 @@ if __name__ == '__main__':
     # calib_Al = Calibration("Al")
     calib_In = Calibration("In")
 
-    mbe.decrement_recipes_running()
+    mbe.set_stdby()
