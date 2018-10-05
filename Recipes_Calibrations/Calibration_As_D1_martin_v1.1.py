@@ -63,7 +63,7 @@ if __name__ == '__main__':
             ts_print("Opening shutter and making measurement")
             mbe.shutter(mat, True)  # Open shutter
 
-            pressure, background, p_std, b_std = mbe.read_pressures(max_t=60, n=30, error=0.01)
+            pressure, background, p_std, b_std = mbe.read_pressures(max_t=60, n=10, error=0.01)
             f = open(filename, "a")
             f.write("{:.0f}\t{:.6E}\t{:.6E}\t{:.6E}\t{:.6E}\n".format(value, pressure, background, p_std, b_std))
             f.close()
