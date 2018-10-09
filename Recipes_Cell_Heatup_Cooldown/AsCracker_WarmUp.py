@@ -3,13 +3,12 @@ from mbe_calibration import Calibration
 
 T_as_cracker_final = 950
 T_as_cracker_degas = 1200
-t_degas = 60*15 # degas for 15 minutes
+t_degas = 60 * 15  # degas for 15 minutes
 
 if __name__ == '__main__':
     with MBERecipe(virtual_server=False) as mbe:
-
         # TEMPORARY #####################
-        mbe.waiting(4*60*60) # Wait three hours
+        mbe.waiting(4 * 60 * 60)  # Wait four hours
         # TEMPORARY #####################
 
         mbe.set_param("AsCracker.Mode", "Auto")
