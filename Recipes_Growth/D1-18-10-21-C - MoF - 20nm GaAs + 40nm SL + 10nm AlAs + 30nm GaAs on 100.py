@@ -12,7 +12,7 @@ use_pyro = False
 ###########################
 rate_ga = 0.5  # A/s
 rate_al = 0.5  # A/s
-ftr_gaas = 80  # five three ratio
+ftr = 150  # five three ratio
 n_superlattice = 10  # Superlattice repetitions
 ###########################
 
@@ -37,10 +37,10 @@ if __name__ == '__main__':
         # Define growth parameters
         T_Ga = calib_Ga.calc_setpoint_gr(rate_ga)  # Ga temp
         T_Al = calib_Al.calc_setpoint_gr(rate_al)  # Ga temp
-        T_Anneal_Manip = 760  # Desired manip temperature (pyro is broken)
-        T_Growth_Manip = 730  # Desired manip temperature (pyro is broken)
-        p_as_gaas = calib_Ga.calc_p_arsenic(rate_ga, ftr_gaas)  # Desired As pressure for GaAs growth
-        as_valve_gaas = calib_As.calc_setpoint(p_as_gaas)
+        T_Anneal_Manip = 750  # Desired manip temperature (pyro is broken)
+        T_Growth_Manip = 700  # Desired manip temperature (pyro is broken)
+        p_as = calib_Ga.calc_p_arsenic(rate_ga, ftr)  # Desired As pressure for GaAs growth
+        as_valve = calib_As.calc_setpoint(p_as)
         t_anneal = 10 * 60  # 10 minutes
         thickness_gaas1 = 20  # nm
         t_growth_gaas1 = thickness_gaas1 * 10 / rate_ga  # Always grow the same thickness of material
@@ -48,7 +48,9 @@ if __name__ == '__main__':
         t_growth_sl_gaas = thickness_sl_gaas * 10 / rate_ga  # Always grow the same thickness of material
         thickness_sl_alas = 2  # nm
         t_growth_sl_alas = thickness_sl_alas * 10 / rate_al  # Always grow the same thickness of material
-        thickness_gaas2 = 40  # nm
+        thickness_alas = 10  # nm
+        t_growth_alas = thickness_alas * 10 / rate_al  # Always grow the same thickness of material
+        thickness_gaas2 = 30  # nm
         t_growth_gaas2 = thickness_gaas2 * 10 / rate_ga  # Always grow the same thickness of material
 
         # Check that MBE parameters are in standby mode
@@ -62,7 +64,7 @@ if __name__ == '__main__':
 
         # Check pressure before ramping up anything, make sure As valve is working
         ts_print("Opening arsenic cracker valve and shutter")
-        mbe.set_param("AsCracker.Valve.OP", as_valve_gaas)
+        mbe.set_param("AsCracker.Valve.OP", as_valve)
         mbe.shutter("As", True)
         mbe.waiting(60 * 3)  # Wait 3min
         ts_print("Checking pressure")
@@ -125,6 +127,17 @@ if __name__ == '__main__':
         mbe.waiting(10)  # Pause 10 seconds
 
         #############################################################################
+        # AlAs Buffer Layer
+        #############################################################################
+        # Open Al shutter and start growth
+        ts_print("Opening Al shutter and waiting growth time")
+        mbe.shutter("Al", True)
+        mbe.waiting(t_growth_alas)  # Wait Growth Time
+        mbe.shutter("Al", False)
+
+        mbe.waiting(10)  # Pause 10 seconds
+
+        #############################################################################
         # GaAs Buffer Layer 2
         #############################################################################
         # Open Ga shutter and start growth
@@ -133,10 +146,14 @@ if __name__ == '__main__':
         mbe.waiting(t_growth_gaas2)  # Wait Growth Time
         mbe.shutter("Ga", False)
 
+        mbe.waiting(10)  # Pause 10 seconds
+
         ##############################################################################
         # Cool Down Cells
         ##############################################################################
         ts_print("Ramping down Manipulator")
+        mbe.set_param("Ga.PV.TSP", 550)
+        mbe.set_param("Al.PV.TSP", 750)
         mbe.set_param("Manip.PV.Rate", 100)
         mbe.set_param("Manip.PV.TSP", 200)
         mbe.wait_to_reach_temp(200, error=3)
