@@ -22,8 +22,8 @@ if __name__ == '__main__':
 
         # Define parameters
         n_repetitions = 200
-        t_open = 8  # seconds
-        t_close = 8  # seconds
+        t_open = 4  # seconds
+        t_close = 4  # seconds
 
         while n_repetitions:
             mbe.shutter("Ga", True)
