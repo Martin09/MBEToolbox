@@ -154,9 +154,8 @@ class VirtualMBE:
         self.timeStep = 1
         # Initialize MBE variables
         self.dataArray = []
-        self.shutters = ['in', 'ga', 'as', 'al', 'sb', 'susi', 'suko', 'pyrometer']
+        self.shutters = ['in', 'ga', 'as', 'al', 'sb', 'susi', 'suko', 'pyrometer', 'viewport']
         self.controllers = ['manip', 'in', 'ga', 'as', 'al', 'sb', 'susi', 'suko', 'ascracker', 'sbcracker']
-
         self.variables = {'time': 0, 'manip.rs.rpm': 0,
                           'mbe.p': 1E-7, 'this.recipesrunning': 0,
                           'manip.pv': 200, 'manip.pv.rate': 0, 'manip.pv.tsp': 200,
@@ -185,7 +184,7 @@ class VirtualMBE:
                           'susi.op': 10, 'susi.op.rate': 0.5, 'susi.op.tsp': 10, 'susi.mode': 'manual',
                           'shutter.in': 'closed', 'shutter.ga': 'closed', 'shutter.as': 'closed',
                           'shutter.al': 'closed', 'shutter.sb': 'closed', 'shutter.susi': 'closed',
-                          'shutter.suko': 'closed', 'shutter.pyrometer': 'closed',
+                          'shutter.suko': 'closed', 'shutter.pyrometer': 'closed', 'shutter.viewport': 'closed',
                           'pyrometer.t': 0, 'bfm.lt': 0}
 
     def set_param(self, parameter, value):
@@ -266,6 +265,8 @@ class VirtualMBE:
             parameter = 'manip.rs.rpm'
         elif parameter.lower() == 'ascracker.valve':
             parameter = 'ascracker.valve.op'
+        elif parameter.lower() == 'sbcracker.valve':
+            parameter = 'sbcracker.valve.op'
 
         if parameter.lower() not in self.variables.iterkeys():
             return False

@@ -4,14 +4,11 @@ Some functions that help in MBE growth
 """
 # TODO: implement the Sb cell commands!
 from datetime import datetime
-from time import sleep, clock, time
-from tqdm import trange
+from time import sleep, clock
 import numpy as np
 
 from MBE_Tools import ServerConnection
 from Virtual_MBE.virtual_mbe_server_client import Connect
-from SbValveControl import SbValve
-
 
 def ts_print(string):
     """
@@ -35,7 +32,7 @@ class MBERecipe:
     a user's recipe and the MBE server.
     """
 
-    def __init__(self, virtual_server=False, scriptname=None):
+    def __init__(self, virtual_server=False, scriptname=None, stdby_at_exit=True):
         self.virtual_server = virtual_server
         if not self.virtual_server:
             self.conn = ServerConnection("10.18.7.24", "55001", "xxa")
@@ -43,11 +40,6 @@ class MBERecipe:
             # make a debugging server connection
             self.conn = Connect('localhost', 9999)
             self.conn.send_command('#reset_virt_mbe')
-
-        self.sbValve = SbValve(COM=2)
-
-        if not self.sbValve.working:
-            ts_print("Warning, couldn't connect to Sb valve")
 
         if scriptname:
             self.log_fn = scriptname[:-3] + '.log'
@@ -58,6 +50,7 @@ class MBERecipe:
         # TODO: turn the manip_offset value into a function which depends on temp (and calibrate it for various holders)
         self.manip_offset = 110  # Used to be 110 before 01/05/2017, before arm crash?
         self.timer_start_time = 0
+        self.stdby_at_exit = stdby_at_exit
 
     def __enter__(self):
         return self
@@ -70,7 +63,8 @@ class MBERecipe:
         """
         if self.recipeStarted:
             self.ts_print('Exiting cleanly...')
-            self.set_stdby()
+            if self.stdby_at_exit:
+                self.set_stdby()
             self.decrement_recipes_running()  # Decrement number of recipes flag
             self.conn.close()  # Close MBE server connection
 
@@ -110,8 +104,6 @@ class MBERecipe:
         :return: value of the parameter, as a string
         :rtype: str
         """
-        if parameter.lower() == 'sbcracker.valve.op':
-            return self.sbValve.getPV()
 
         return self.conn.send_command("Get {}".format(parameter))
 
@@ -141,10 +133,7 @@ class MBERecipe:
         MAX_TRIES = 10
         tries = 1
         while True:
-            if parameter.lower() == 'sbcracker.valve.op':
-                self.sbValve.setPV(value)
-            else:
-                self.conn.send_command("Set {} {}".format(parameter, value))
+            self.conn.send_command("Set {} {}".format(parameter, value))
 
             sleep(delay)
             if parameter.lower() == 'manip.rs.rpm':
@@ -154,7 +143,7 @@ class MBERecipe:
                 srv_reply = self.conn.send_command('Get AsCracker.Valve')
             elif parameter.lower() == 'sbcracker.valve.op':
                 sleep(1)  # Give time for Sb valve to respond
-                srv_reply = self.sbValve.getPV()
+                srv_reply = self.conn.send_command('Get SbCracker.Valve')
             else:
                 srv_reply = self.conn.send_command("Get {}".format(parameter))
 
@@ -598,11 +587,15 @@ class MBERecipe:
         :return: None
         """
         # Close all shutters
-        shutters = ['In', 'Ga', 'As', 'Al', 'Sb', 'SUSI', 'SUKO']
+        shutters = ['In', 'Ga', 'As', 'Al', 'Sb', 'SUSI', 'SUKO', 'Viewport', 'Pyrometer']
         self.shutter(shutters, [False] * len(shutters))
 
-        # Close Arsenic Valve
+        # Close Arsenic/Antimony Valves
         self.set_param("AsCracker.Valve.OP", 0)
+        try:
+            self.set_param("SbCracker.Valve.OP", 0)
+        except:
+            print("ERROR, COULDN'T CLOSE SB VALVE!")
 
         # Stop substrate rotation
         self.set_param("Manip.RS.RPM", 0)
@@ -613,9 +606,7 @@ class MBERecipe:
             "In": {"PV.TSP": 515, "PV.Rate": 15},
             "Ga": {"PV.TSP": 550, "PV.Rate": 40},
             "Al": {"PV.TSP": 750, "PV.Rate": 10},
-            "Sb": {"PV.TSP": 250, "PV.Rate": 15},  # Double check this!
-            "SbCracker": {"PV.TSP": 800, "PV.Rate": 5},  # Double check this!
-            "SbCond": {"PV.TSP": 800, "PV.Rate": 5}}  # Double check this!
+            "Sb": {"PV.TSP": 400, "PV.Rate": 5}}
         for key, value in stdby_set_dict.iteritems():
             if float(self.get_param("{}.PV".format(key))) <= value["PV.TSP"]:  # Don't ramps up cold cells or manip
                 continue
@@ -716,9 +707,11 @@ if __name__ == '__main__':
     mbe = MBERecipe(scriptname='test.py')
     from mbe_calibration import Calibration
 
-    calib_As = Calibration("As")
-    calib_Ga = Calibration("Ga")
+    calib_Sb = Calibration("Sb")
+    # calib_As = Calibration("As")
+    # calib_Ga = Calibration("Ga")
     # calib_Al = Calibration("Al")
-    calib_In = Calibration("In")
+    # calib_In = Calibration("In")
 
-    mbe.decrement_recipes_running()
+    # mbe.decrement_recipes_running()
+    pass

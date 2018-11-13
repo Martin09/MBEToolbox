@@ -1,61 +1,53 @@
-"""
-Example of a growth recipe for nanomembranes with InAs nanowires on top.
-Requires the new MBE_Toolbox
-"""
-import sys, os
-sys.path.insert(1, os.path.join(sys.path[0], '..'))  # Add parent directory to path
 from recipe_helper import MBERecipe, ts_print
 from mbe_calibration import Calibration
 
-sb_stdby = 250
-sbcracker_stbdy = 300
-sbcond_stbdy = 300
+"""
+Any time the valved cracker needs to be cooled to room temperature, follow
+this procedure:
+    1. Ramp the bulk evaporator to room temperature using a ramp rate of 5C/min.
+    2. Wait until the bulk evaporator temperature has dropped 100C from the operating temperature
+    3. Open the valve at least 100 mil.
+    4. Ramp the cracking zone and conductance zone to room temperature using a ramp rate of 20C/min
+    
+"Any time the cracking zone or the conductance
+zone temperature is adjusted, the valve must be partially open.
+The crucible is made of PBN and the drive mechanism for the
+valve is made of tantalum and molybdenum. These materials
+have different rates of the thermal expansion, which could cause
+jamming or breakage of the needle or crucible."
+"""
 
-run_virtual_server = False
-
-# If running the script locally:
 if __name__ == '__main__':
+    with MBERecipe(virtual_server=False) as mbe:
+        T_stdby_sb_tank = 50
+        T_stdby_sb_cond = 50
+        T_stdby_sb_cracker = 700
 
-    with MBERecipe(virtual_server=run_virtual_server) as mbe:
-        # Prompt user if they are sure
-        mbe.starting_growth_prompt()
+        T_curr_sb_tank = float(mbe.get_param("Sb.PV"))
 
-        # Check that no other recipes are already running
-        if not mbe.get_recipes_running() == 0:
-            raise Exception("At least one recipe is running!")
-
-        # Increment number of recipes flag and set recipes running to true
-        mbe.start_recipe()
-
-        mbe.set_param("SbCracker.Valve.OP", 30)  # Crack open Sb valve during cool down
-        ts_print("Sb cracker opened to {}%".format(mbe.get_param("SbCracker.Valve.OP")))
-
-        mbe.set_param("SbCracker.PV.Rate", 10)
-        mbe.set_param("SbCracker.PV.TSP", sbcracker_stbdy)
-        mbe.set_param("SbCond.PV.Rate", 10)
-        mbe.set_param("SbCond.PV.TSP", sbcond_stbdy)
+        mbe.set_param("Sb.Mode", "Auto")
         mbe.set_param("Sb.PV.Rate", 5)
-        mbe.set_param("Sb.PV.TSP", sb_stdby)
+        mbe.set_param("Sb.OP.Rate", 0)
+        mbe.set_param("Sb.PV.TSP", T_stdby_sb_tank)
 
-        # Testing
-        mbe.wait_to_reach_temp(795, PID='SbCracker', error=3)
-        ts_print("SbCracker Reached 795")
-        mbe.wait_to_reach_temp(790, PID='SbCond', error=3)
-        ts_print("SbCond Reached 790")
-        mbe.wait_to_reach_temp(490, PID='Sb', error=3)
-        ts_print("Sb Reached 490")
+        if (T_curr_sb_tank - 100) < T_stdby_sb_tank:
+            mbe.wait_to_reach_temp(T_stdby_sb_tank, PID='Sb')
+        else:
+            mbe.wait_to_reach_temp(T_curr_sb_tank - 100, PID='Sb')
 
-        mbe.wait_to_reach_temp(sbcracker_stbdy, PID='SbCracker', error=1)
-        mbe.wait_to_reach_temp(sbcond_stbdy, PID='SbCond', error=1)
-        mbe.wait_to_reach_temp(sb_stdby, PID='Sb', error=1)
+        mbe.set_param("SbCracker.Valve.OP", 33)  # Open antimony valve
 
-        mbe.set_param("SbCracker.Valve.OP", 0)  # Close Sb valve again after cool down
-        ts_print("Sb cracker closed. Current value {}%".format(mbe.get_param("SbCracker.Valve.OP")))
+        mbe.set_param("SbCond.Mode", "Auto")
+        mbe.set_param("SbCond.PV.Rate", 20)
+        mbe.set_param("SbCond.OP.Rate", 0)
+        mbe.set_param("SbCond.PV.TSP", T_stdby_sb_cond)
 
-        mbe.set_stdby()  # Set cells to standby conditions just in case we forgot something in the code
+        mbe.set_param("SbCracker.Mode", "Auto")
+        mbe.set_param("SbCracker.PV.Rate", 20)
+        mbe.set_param("SbCracker.OP.Rate", 0)
+        mbe.set_param("SbCracker.PV.TSP", T_stdby_sb_cracker)
 
-    ts_print("Recipe Done.")
+        # mbe.wait_to_reach_temp( PID='SbCond')
+        mbe.wait_to_reach_temp(PID='SbCracker')
 
-    if mbe.virtual_server:
-        ts_print("Plotting the log file")
-        mbe.plot_log(filename=__file__.split('/')[-1].split(' ')[0])
+        mbe.set_param("SbCracker.Valve.OP", 0)  # Close antimony valve

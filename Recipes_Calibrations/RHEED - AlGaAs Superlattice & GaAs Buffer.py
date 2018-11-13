@@ -21,7 +21,7 @@ if __name__ == '__main__':
     calib_As = Calibration("As")
     calib_Al = Calibration("Al")
 
-    with MBERecipe(virtual_server=run_virtual_server) as mbe:
+    with MBERecipe(virtual_server=run_virtual_server, stdby_at_exit=False) as mbe:
         # Prompt user if they are sure
         mbe.starting_growth_prompt()
 
@@ -37,10 +37,10 @@ if __name__ == '__main__':
         T_Ga = calib_Ga.calc_setpoint_gr(rate_ga)  # Ga temp
         T_Al = calib_Al.calc_setpoint_gr(rate_al)  # Al temp
 
-        T_Anneal_Manip = 750  # Temperature for substrate de-oxidation
+        T_Anneal_Manip = 800  # Temperature for substrate de-oxidation
         t_anneal = 10 * 60  # 10 minutes
 
-        T_Growth_Manip = 700  # Desired manip temperature
+        T_Growth_Manip = 750  # Desired manip temperature
         as_valve_gaas = calib_As.calc_setpoint(p_as)
 
         thickness_gaas_buffer1 = 180  # nm
@@ -54,32 +54,32 @@ if __name__ == '__main__':
         thickness_gaas_buffer2 = 60  # nm
         t_growth_gaas_buffer2 = thickness_gaas_buffer2 * 10 / rate_ga  # Always grow the same thickness of material
 
-        # Check that MBE parameters are in standby mode
-        ts_print("Checking standby conditions")
-        if not (mbe.check_stdby()):
-            raise Exception('MBE standby conditions not met, growth aborted!')
-
+        # # Check that MBE parameters are in standby mode
+        # ts_print("Checking standby conditions")
+        # if not (mbe.check_stdby()):
+        #     raise Exception('MBE standby conditions not met, growth aborted!')
+        #
         # Start substrate rotation
         ts_print("Starting substrate rotation")
         mbe.set_param("Manip.RS.RPM", -7)
-
+        #
         # Check pressure before ramping up anything, make sure As valve is working
         ts_print("Opening arsenic cracker valve and shutter")
         mbe.set_param("AsCracker.Valve.OP", as_valve_gaas)
         mbe.shutter("As", True)
-        mbe.waiting(60 * 3)  # Wait 3min
-        ts_print("Checking pressure")
-        if float(mbe.get_param("MBE.P")) < 1e-8:  # Make sure As valve opened properly
-            mbe.set_param("Manip.PV.TSP", 200)
-            mbe.set_param("Manip.PV.Rate", 100)
-            raise Exception(
-                "Pressure <1e-8 after opening As. Something wrong, check As valve, shutter and tank temperature!")
-        ts_print("Pressure looks good.")
-
-        ts_print("Ramping to degassing temperature")
-        mbe.set_param("Manip.PV.Rate", 50)
-        mbe.set_param("Manip.OP.Rate", 0)
-        mbe.set_param("Manip.PV.TSP", T_Anneal_Manip)  # Anneal temperature
+        # mbe.waiting(60 * 3)  # Wait 3min
+        # ts_print("Checking pressure")
+        # if float(mbe.get_param("MBE.P")) < 1e-8:  # Make sure As valve opened properly
+        #     mbe.set_param("Manip.PV.TSP", 200)
+        #     mbe.set_param("Manip.PV.Rate", 100)
+        #     raise Exception(
+        #         "Pressure <1e-8 after opening As. Something wrong, check As valve, shutter and tank temperature!")
+        # ts_print("Pressure looks good.")
+        #
+        # ts_print("Ramping to degassing temperature")
+        # mbe.set_param("Manip.PV.Rate", 50)
+        # mbe.set_param("Manip.OP.Rate", 0)
+        # mbe.set_param("Manip.PV.TSP", T_Anneal_Manip)  # Anneal temperature
         ts_print("Ramping up Ga and Al sources")
         mbe.set_param("Ga.PV.Rate", 40)
         mbe.set_param("Ga.OP.Rate", 0)
@@ -87,12 +87,12 @@ if __name__ == '__main__':
         mbe.set_param("Al.PV.Rate", 20)
         mbe.set_param("Al.OP.Rate", 0)
         mbe.set_param("Al.PV.TSP", T_Al)
-
-        ##############################################################################
-        # Anneal sample
-        ##############################################################################
-        mbe.wait_to_reach_temp(T_Anneal_Manip)
-        mbe.waiting(t_anneal)  # Wait Growth Time
+        #
+        # ##############################################################################
+        # # Anneal sample
+        # ##############################################################################
+        # mbe.wait_to_reach_temp(T_Anneal_Manip)
+        # mbe.waiting(t_anneal)  # Wait Growth Time
 
         ##############################################################################
         # GaAs Buffer #1
@@ -151,7 +151,7 @@ if __name__ == '__main__':
         mbe.set_param("Manip.RS.RPM", 0)
 
         mbe.set_stdby()  # Set cells to standby conditions just in case we forgot something in the code
-        mbe.waiting(60 * 10)
+        # mbe.waiting(60 * 10)
 
     ts_print("Recipe Done.")
 
