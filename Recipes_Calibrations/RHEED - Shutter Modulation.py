@@ -12,7 +12,7 @@ run_virtual_server = False
 # If running the script locally:
 if __name__ == '__main__':
 
-    with MBERecipe(virtual_server=run_virtual_server) as mbe:
+    with MBERecipe(virtual_server=run_virtual_server, stdby_at_exit=False) as mbe:
         # Check that no other recipes are already running
         if not mbe.get_recipes_running() == 0:
             raise Exception("At least one recipe is running!")
@@ -22,8 +22,8 @@ if __name__ == '__main__':
 
         # Define parameters
         n_repetitions = 200
-        t_open = 4  # seconds
-        t_close = 4  # seconds
+        t_open = 8  # seconds
+        t_close = 8  # seconds
 
         while n_repetitions:
             mbe.shutter("Ga", True)

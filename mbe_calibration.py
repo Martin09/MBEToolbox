@@ -37,6 +37,8 @@ class Calibration:
         # Set the name of the x-axis data
         if self.mat == 'As':
             self.x_col = 'AsOpening'
+        elif self.mat == 'Sb':
+            self.x_col = 'SbOpening'
         else:
             self.x_col = '{:s}Temp'.format(self.mat)
         self.spline_interp_inv = None
@@ -61,7 +63,8 @@ class Calibration:
         if plot:
             self.bfm_plt_axis = self.plot_bfm_data(self.bfm_data, self.filename)
 
-        if not self.mat.lower() == 'as':  # If its not arsenic, fetch the latest rheed calibration
+        # If its not arsenic or antimony, fetch the latest rheed calibration
+        if not (self.mat.lower() == 'as' or self.mat.lower() == 'sb'):
             self.rheed_data = self.get_rheed_data(rheed_filename)
 
     def get_rheed_data(self, fn_rheed=None):
@@ -75,7 +78,7 @@ class Calibration:
             bfm_path = '../Calibration_Data/RHEED_vs_BFM/'  # use local calibration files
 
         if fn_rheed:
-            rheed_path = bfm_path + fn_rheed
+            rheed_path = bfm_path + self.mat + "/" + fn_rheed
         else:
             rheed_path = self.get_latest_file(directory=bfm_path + self.mat)
         return self.read_rheed_file(rheed_path)
@@ -166,7 +169,7 @@ class Calibration:
         :return: spline interpolation function, y = f(x)
         :rtype: func
         """
-        if self.mat.lower() == 'as':
+        if self.mat.lower() == 'as' or self.mat.lower() == 'sb':
             # Average the data points so there is only one y value per x value
             spl_data = data.groupby(by=self.x_col).mean().reset_index()
             spl_x = np.array(spl_data[self.x_col])
@@ -176,8 +179,6 @@ class Calibration:
             # spl = Akima1DInterpolator(spl_y, spl_x)
             bfm_model = interp1d(spl_y, spl_x, kind='linear')
         else:
-            # TODO: Test this!
-            #### BELOW IS FOR FITTING A POWER LAW FUNCTION, USE FOR THE BFM VS CELL TEMP DATA (EXCL. AS)
             logx = log10(self.bfm_data['BFM.P'])
             logy = log10(self.bfm_data[self.x_col])
 
@@ -211,7 +212,7 @@ class Calibration:
 
         # TODO: add input checking to make sure the desired_flux is within some reasonable range
 
-        if self.mat.lower() == 'as':  # Be careful about going outside the calibration range
+        if self.mat.lower() == 'as' or self.mat.lower() == 'sb':  # Be careful about going outside the calibration range
             calib_max = self.bfm_data['BFM.P'].max()
             calib_min = self.bfm_data['BFM.P'].min()
             # TODO: Add the possibility to extrapolate outside fitting range?
@@ -240,6 +241,8 @@ class Calibration:
         # TODO: add input checking to make sure the desired_gr is within some reasonable range
         if self.mat.lower() == 'as':
             return ValueError('Arsenic calibration cannot use GR setpoint!')
+        if self.mat.lower() == 'sb':
+            return ValueError('Antimony calibration cannot use GR setpoint!')
 
         x = self.rheed_data['Rate (A/s)']
         y = self.rheed_data['BFM.P']
@@ -248,7 +251,6 @@ class Calibration:
         bfm_pressure = np.polyval(p, desired_gr)
 
         # TODO: Add limit testing!!! If returns value outside the allowed temperature range, raise an exception
-
 
         return self.calc_setpoint(bfm_pressure)
 
@@ -261,6 +263,8 @@ class Calibration:
         """
         if self.mat.lower() == 'as':
             return ValueError('Arsenic calibration cannot use GR setpoint!')
+        if self.mat.lower() == 'sb':
+            return ValueError('Antimony calibration cannot use GR setpoint!')
 
         return self.calc_bfm_p(group3_gr) * desired_53ratio
 
@@ -332,8 +336,8 @@ class Calibration:
         xlim = [min(self.bfm_data[self.x_col]) - xrange * 0.05, max(self.bfm_data[self.x_col]) + xrange * 0.05]
 
         ax = data.plot(x=self.x_col, y='BFM.P', style='.-', grid=True, logy=False, xlim=xlim, ylim=ylim)
-        if self.mat == 'As':
-            ax.set_xlabel('As Opening %')
+        if self.mat == 'As' or self.mat == 'Sb':
+            ax.set_xlabel(self.mat + ' Opening %')
         else:
             ax.set_xlabel('{:s} Temp (deg C)'.format(self.mat))
         ax.set_ylabel('Pressure')
@@ -353,8 +357,9 @@ if __name__ == '__main__':
     # fn = None
     fn = '2017-07-03_09-45-00_As.txt'
     # fn = 'CalibrationFiles/2016-08-16_22-59-32_Ga.txt'
-    calib = Calibration('As', plot=True)
+    calib = Calibration('Ga', plot=True)
+    calib1 = Calibration('Sb', plot=True)
     calib2 = Calibration('In', plot=True)
 
-    print calib.calc_setpoint(4E-6)
-    print calib2.calc_setpoint_gr(0.2)
+    # print calib.calc_setpoint(4E-6)
+    print calib.calc_setpoint_gr(0.3)
