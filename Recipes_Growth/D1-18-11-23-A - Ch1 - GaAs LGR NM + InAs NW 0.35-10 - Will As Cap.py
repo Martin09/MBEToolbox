@@ -14,6 +14,7 @@ use_pyro = False
 # 09-04-B - Lowered manip temperature of both GaAs and InAs steps by 20 degrees.
 # 10-04-B - Increased temps by 40 degrees because growing on the Ch1 holder. Cracker is only at 600.
 # 11-11-A - Growing for half the time, reverted to old calibration files
+# 11-23-A - Growing standard LGR nanowire sample for investigations in Bruno Grandidier's group. Will As cap this later.
 ###########################
 rate_ga = 0.3  # A/s
 ftr_gaas = 80  # five three ratio
@@ -68,7 +69,7 @@ if __name__ == '__main__':
         ts_print("Opening arsenic cracker valve and shutter")
         mbe.set_param("AsCracker.Valve.OP", as_valve_gaas)
         mbe.shutter("As", True)
-        mbe.waiting(60 * 3)  # Wait 3min
+        mbe.waiting(60 * 1)  # Wait 1min
         ts_print("Checking pressure")
         if float(mbe.get_param("MBE.P")) < 1e-8:  # Make sure As valve opened properly
             mbe.set_param("Manip.PV.TSP", 200)

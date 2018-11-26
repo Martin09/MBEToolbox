@@ -2,32 +2,30 @@
 Example of a growth recipe for nanomembranes with InAs nanowires on top.
 Requires the new MBE_Toolbox
 """
+import os
+import sys
+
+sys.path.insert(1, os.path.join(sys.path[0], '..'))  # Add parent directory to path
 from recipe_helper import MBERecipe, ts_print
 from mbe_calibration import Calibration
 
-run_virtual_server = False
-use_pyro = False
+# Trying to grow a nanomembrane tall and then reduce its growth rate to encourage the formation of a flat top facet
+# 11-13-A - Reverted to old calibration files and also trying again, last time Sb cracker outgassed all over the sample.
+###########################
+rate_ga = 1.0  # A/s - Will calculate cell temp from this based on latest RHEED/BFM calibrations
+rate_ga2 = 0.3  # A/s - Will calculate cell temp from this based on latest RHEED/BFM calibrations
+p_as_gaas = 4.0E-6  # Torr - Will calculate valve opening from this based on latest BFM calibrations
+ftr_gaas2 = 80
+###########################
 
-# Low GR growth, starting with conditions that I am used to (T=630, P_As=4E-6) and just decreasing Ga rate to 0.3 A/s
-# Try InAs with copenhagen growth conditions, no Sb though
-# Cracker is at 950
-# 09-04-B - Lowered manip temperature of both GaAs and InAs steps by 20 degrees.
-# 10-04-B - Increased temps by 40 degrees because growing on the Ch1 holder. Cracker is only at 600.
-# 11-11-A - Growing for half the time, reverted to old calibration files
-###########################
-rate_ga = 0.3  # A/s
-ftr_gaas = 80  # five three ratio
-rate_in = 0.35  # A/s
-ftr_inas = 10  # five three ratio
-###########################
+run_virtual_server = False
 
 # If running the script locally:
 if __name__ == '__main__':
-    calib_In = Calibration("In", filename="2018-08-31_14-55-37_In.txt")
     calib_Ga = Calibration("Ga", filename="2018-08-31_13-51-50_Ga.txt", rheed_filename="2017-06-30_Ga.txt")
     calib_As = Calibration("As", filename="2018-10-02_17-45-23_As.txt")
 
-    with MBERecipe(virtual_server=run_virtual_server) as mbe:
+    with MBERecipe(virtual_server=run_virtual_server, stdby_at_exit=True) as mbe:
         # Prompt user if they are sure
         mbe.starting_growth_prompt()
 
@@ -40,20 +38,18 @@ if __name__ == '__main__':
         ts_print("Setting variables")
 
         # Define growth parameters
-        T_Ga = calib_Ga.calc_setpoint_gr(rate_ga)  # Ga temp
-        T_In = calib_In.calc_setpoint_gr(rate_in)  # In temp
-        T_Anneal_Manip = 800  # Desired manip temperature (pyro is broken)
-        T_GaAs_Manip = 770  # Desired manip temperature (pyro is broken)
-        T_InAs_Manip = 660  # Desired manip temperature for InAs growth
-        p_as_gaas = calib_Ga.calc_p_arsenic(rate_ga, ftr_gaas)  # Desired As pressure for GaAs growth
+        T_Ga = calib_Ga.calc_setpoint_gr(rate_ga)
+        T_Ga2 = calib_Ga.calc_setpoint_gr(rate_ga2)
+        T_Des_Anneal_Manip = 760  # Desired manip temperature (pyro is broken)
+        T_Des_GaAs_Manip = 750  # Desired manip temperature (pyro is broken)
         as_valve_gaas = calib_As.calc_setpoint(p_as_gaas)
-        p_as_inas = calib_In.calc_p_arsenic(rate_in, ftr_inas)  # Desired As pressure for InAs growth
-        as_valve_inas = calib_As.calc_setpoint(p_as_inas)
+        p_as_gaas2 = calib_Ga.calc_p_arsenic(rate_ga2, ftr_gaas2)  # Desired As pressure for GaAs growth
+        as_valve_gaas2 = calib_As.calc_setpoint(p_as_gaas2)
         t_anneal = 10 * 60  # 30 minutes
-        thickness_gaas = 50  # nm
-        t_growth_gaas = thickness_gaas * 10 / rate_ga  # Always grow the same thickness of material
-        thickness_inas = 30  # nm
-        t_growth_inas = thickness_inas * 10 / rate_in  # Always grow the same thickness of material
+        t_growth_gaas1 = 20 * 60  # 30 minutes
+        t_growth_gaas2 = 20 * 60  # 30 minutes
+
+        Si_current = 30  # 30A
 
         # Check that MBE parameters are in standby mode
         ts_print("Checking standby conditions")
@@ -68,7 +64,7 @@ if __name__ == '__main__':
         ts_print("Opening arsenic cracker valve and shutter")
         mbe.set_param("AsCracker.Valve.OP", as_valve_gaas)
         mbe.shutter("As", True)
-        mbe.waiting(60 * 3)  # Wait 3min
+        mbe.waiting(60 * 1)  # Wait 3min
         ts_print("Checking pressure")
         if float(mbe.get_param("MBE.P")) < 1e-8:  # Make sure As valve opened properly
             mbe.set_param("Manip.PV.TSP", 200)
@@ -80,75 +76,62 @@ if __name__ == '__main__':
         ts_print("Ramping to degassing temperature")
         mbe.set_param("Manip.PV.Rate", 50)
         mbe.set_param("Manip.OP.Rate", 0)
-        mbe.set_param("Manip.PV.TSP", T_Anneal_Manip)  # Anneal temperature
-        ts_print("Ramping up Ga and In sources")
+        mbe.set_param("Manip.PV.TSP", T_Des_Anneal_Manip)  # Anneal temperature
+        ts_print("Ramping up Ga source")
         mbe.set_param("Ga.PV.Rate", 40)
         mbe.set_param("Ga.OP.Rate", 0)
         mbe.set_param("Ga.PV.TSP", T_Ga)
-        mbe.set_param("In.PV.Rate", 15)
-        mbe.set_param("In.OP.Rate", 0)
-        mbe.set_param("In.PV.TSP", T_In)
 
         ##############################################################################
         # Anneal sample
         ##############################################################################
-        mbe.wait_to_reach_temp(T_Anneal_Manip)
+        mbe.wait_to_reach_temp(T_Des_Anneal_Manip)
         mbe.timer_start()
-        if use_pyro:
-            mbe.converge_to_temp(T_Anneal_Manip)  # Takes about 4min
         mbe.timer_wait(t_anneal)
 
         ##############################################################################
         # GaAs Membrane
         #############################################################################
         # Go to growth conditions
-        ts_print("Going to GaAs growth conditions, setting manip to {}".format(T_GaAs_Manip))
+        ts_print("Going to GaAs HGR conditions, setting manip to {}".format(T_Des_GaAs_Manip))
         mbe.set_param("Manip.PV.Rate", 30)
-        mbe.set_param("Manip.PV.TSP", T_GaAs_Manip)
+        mbe.set_param("Manip.PV.TSP", T_Des_GaAs_Manip)
         # Wait until growth temperature is reached
-        mbe.wait_to_reach_temp(T_GaAs_Manip)
-        if use_pyro:
-            mbe.converge_to_temp(T_GaAs_Manip)  # Takes about 4min
+        mbe.wait_to_reach_temp(T_Des_GaAs_Manip)
 
         # Open Ga shutter and start growth
         ts_print("Opening Ga shutter and waiting growth time")
         mbe.shutter("Ga", True)
-        mbe.waiting(t_growth_gaas)  # Wait Growth Time
+        mbe.waiting(t_growth_gaas1)
         mbe.shutter("Ga", False)
 
-        ts_print("Ramping down Ga")
-        mbe.set_param("Ga.PV.TSP", 550)
-
         ##############################################################################
-        # InAs Nanowire
-        ##############################################################################
-
-        # Go to InAs growth temp
-        ts_print("Going to InAs growth conditions, setting manip to {}".format(T_InAs_Manip))
+        # Shell Growth Starts
+        #############################################################################
+        # Set shell growth conditions
+        ts_print("Going to GaAs LGR conditions, setting manip to {}".format(T_Des_GaAs_Manip))
         mbe.set_param("Manip.PV.Rate", 30)
-
-        mbe.set_param("Manip.PV.TSP", T_InAs_Manip)
-        mbe.wait_to_reach_temp(T_InAs_Manip, error=1)
+        mbe.set_param("Manip.PV.TSP", T_Des_GaAs_Manip)
+        mbe.set_param("Ga.PV.TSP", T_Ga2)
 
         # Set As flux
-        mbe.set_param("AsCracker.Valve.OP", as_valve_inas)
-        mbe.waiting(30)  # Wait for cracker valve to open
+        mbe.set_param("AsCracker.Valve.OP", as_valve_gaas2)
 
-        if use_pyro:
-            mbe.converge_to_temp(T_InAs_Manip)  # Takes about 4min
+        # Wait for manipulator and cell temperatures
+        mbe.wait_to_reach_temp(T_Des_GaAs_Manip, error=1)
+        mbe.wait_to_reach_temp(T_Ga2, PID='Ga', error=1)
 
-        # Start InAs Growth
-        ts_print("Opening In shutter and waiting growth time")
-        mbe.shutter("In", True)
-        mbe.waiting(t_growth_inas)  # Wait Growth Time
-        ts_print("Closing In shutter")
-        mbe.shutter("In", False)
+        # Open Ga shutter and start growth
+        ts_print("Opening Ga shutter and waiting growth time")
+        mbe.shutter("Ga", True)
+        mbe.waiting(t_growth_gaas2)
+        mbe.shutter("Ga", False)
 
         ##############################################################################
         # Cool Down Cells
         ##############################################################################
         ts_print("Ramping down Manipulator")
-        mbe.set_param("In.PV.TSP", 515)
+        mbe.set_param("Ga.PV.TSP", 550)
         mbe.set_param("Manip.PV.Rate", 100)
         mbe.set_param("Manip.PV.TSP", 200)
         mbe.wait_to_reach_temp(200, error=3)
@@ -162,8 +145,8 @@ if __name__ == '__main__':
         mbe.set_stdby()  # Set cells to standby conditions just in case we forgot something in the code
         mbe.waiting(60 * 10)
 
-    ts_print("Recipe Done.")
+        ts_print("Recipe Done.")
 
-    if mbe.virtual_server:
-        ts_print("Plotting the log file")
-        mbe.plot_log(filename=__file__.split('/')[-1].split(' ')[0])
+        if mbe.virtual_server:
+            ts_print("Plotting the log file")
+            mbe.plot_log(filename=__file__.split('/')[-1].split(' ')[0])
