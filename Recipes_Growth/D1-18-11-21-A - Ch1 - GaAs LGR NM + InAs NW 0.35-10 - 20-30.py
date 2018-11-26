@@ -14,6 +14,7 @@ use_pyro = False
 # 09-04-B - Lowered manip temperature of both GaAs and InAs steps by 20 degrees.
 # 10-04-B - Increased temps by 40 degrees because growing on the Ch1 holder. Cracker is only at 600.
 # 11-11-A - Growing for half the time, reverted to old calibration files
+# 11-21-A - Reduce GaAs thickness even more down to 20nm + 30nm InAs
 ###########################
 rate_ga = 0.3  # A/s
 ftr_gaas = 80  # five three ratio
@@ -49,8 +50,8 @@ if __name__ == '__main__':
         as_valve_gaas = calib_As.calc_setpoint(p_as_gaas)
         p_as_inas = calib_In.calc_p_arsenic(rate_in, ftr_inas)  # Desired As pressure for InAs growth
         as_valve_inas = calib_As.calc_setpoint(p_as_inas)
-        t_anneal = 10 * 60  # 30 minutes
-        thickness_gaas = 50  # nm
+        t_anneal = 10 * 60  # 10 minutes
+        thickness_gaas = 20  # nm
         t_growth_gaas = thickness_gaas * 10 / rate_ga  # Always grow the same thickness of material
         thickness_inas = 30  # nm
         t_growth_inas = thickness_inas * 10 / rate_in  # Always grow the same thickness of material

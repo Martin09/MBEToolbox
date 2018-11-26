@@ -119,7 +119,7 @@ class MBERecipe:
         :type value: int, float
         :return: None, returns once the parameter has been set properly
         """
-        MAX_TEMPS = {'manip.pv.tsp': 850,
+        MAX_TEMPS = {'manip.pv.tsp': 900,
                      'in.pv.tsp': 830,
                      'ga.pv.tsp': 1020,
                      'al.pv.tsp': 1120}

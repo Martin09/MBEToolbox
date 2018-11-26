@@ -8,7 +8,7 @@ t_degas = 60 * 15  # degas for 15 minutes
 if __name__ == '__main__':
     with MBERecipe(virtual_server=False) as mbe:
         # TEMPORARY #####################
-        mbe.waiting(4 * 60 * 60)  # Wait four hours
+        #mbe.waiting(4 * 60 * 60)  # Wait four hours
         # TEMPORARY #####################
 
         mbe.set_param("AsCracker.Mode", "Auto")

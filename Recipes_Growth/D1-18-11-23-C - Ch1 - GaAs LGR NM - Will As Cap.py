@@ -14,6 +14,7 @@ use_pyro = False
 # 09-04-B - Lowered manip temperature of both GaAs and InAs steps by 20 degrees.
 # 10-04-B - Increased temps by 40 degrees because growing on the Ch1 holder. Cracker is only at 600.
 # 11-11-A - Growing for half the time, reverted to old calibration files
+# 11-23-A - Growing standard LGR nanowire sample for investigations in Bruno Grandidier's group. Will As cap this later.
 ###########################
 rate_ga = 0.3  # A/s
 ftr_gaas = 80  # five three ratio
@@ -68,7 +69,7 @@ if __name__ == '__main__':
         ts_print("Opening arsenic cracker valve and shutter")
         mbe.set_param("AsCracker.Valve.OP", as_valve_gaas)
         mbe.shutter("As", True)
-        mbe.waiting(60 * 3)  # Wait 3min
+        mbe.waiting(60 * 1)  # Wait 1min
         ts_print("Checking pressure")
         if float(mbe.get_param("MBE.P")) < 1e-8:  # Make sure As valve opened properly
             mbe.set_param("Manip.PV.TSP", 200)
@@ -85,9 +86,9 @@ if __name__ == '__main__':
         mbe.set_param("Ga.PV.Rate", 40)
         mbe.set_param("Ga.OP.Rate", 0)
         mbe.set_param("Ga.PV.TSP", T_Ga)
-        mbe.set_param("In.PV.Rate", 15)
-        mbe.set_param("In.OP.Rate", 0)
-        mbe.set_param("In.PV.TSP", T_In)
+        # mbe.set_param("In.PV.Rate", 15)
+        # mbe.set_param("In.OP.Rate", 0)
+        # mbe.set_param("In.PV.TSP", T_In)
 
         ##############################################################################
         # Anneal sample
@@ -119,30 +120,30 @@ if __name__ == '__main__':
         ts_print("Ramping down Ga")
         mbe.set_param("Ga.PV.TSP", 550)
 
-        ##############################################################################
-        # InAs Nanowire
-        ##############################################################################
-
-        # Go to InAs growth temp
-        ts_print("Going to InAs growth conditions, setting manip to {}".format(T_InAs_Manip))
-        mbe.set_param("Manip.PV.Rate", 30)
-
-        mbe.set_param("Manip.PV.TSP", T_InAs_Manip)
-        mbe.wait_to_reach_temp(T_InAs_Manip, error=1)
-
-        # Set As flux
-        mbe.set_param("AsCracker.Valve.OP", as_valve_inas)
-        mbe.waiting(30)  # Wait for cracker valve to open
-
-        if use_pyro:
-            mbe.converge_to_temp(T_InAs_Manip)  # Takes about 4min
-
-        # Start InAs Growth
-        ts_print("Opening In shutter and waiting growth time")
-        mbe.shutter("In", True)
-        mbe.waiting(t_growth_inas)  # Wait Growth Time
-        ts_print("Closing In shutter")
-        mbe.shutter("In", False)
+        # ##############################################################################
+        # # InAs Nanowire
+        # ##############################################################################
+        #
+        # # Go to InAs growth temp
+        # ts_print("Going to InAs growth conditions, setting manip to {}".format(T_InAs_Manip))
+        # mbe.set_param("Manip.PV.Rate", 30)
+        #
+        # mbe.set_param("Manip.PV.TSP", T_InAs_Manip)
+        # mbe.wait_to_reach_temp(T_InAs_Manip, error=1)
+        #
+        # # Set As flux
+        # mbe.set_param("AsCracker.Valve.OP", as_valve_inas)
+        # mbe.waiting(30)  # Wait for cracker valve to open
+        #
+        # if use_pyro:
+        #     mbe.converge_to_temp(T_InAs_Manip)  # Takes about 4min
+        #
+        # # Start InAs Growth
+        # ts_print("Opening In shutter and waiting growth time")
+        # mbe.shutter("In", True)
+        # mbe.waiting(t_growth_inas)  # Wait Growth Time
+        # ts_print("Closing In shutter")
+        # mbe.shutter("In", False)
 
         ##############################################################################
         # Cool Down Cells
