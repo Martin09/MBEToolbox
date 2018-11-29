@@ -10,6 +10,7 @@ import numpy as np
 from MBE_Tools import ServerConnection
 from Virtual_MBE.virtual_mbe_server_client import Connect
 
+
 def ts_print(string):
     """
     DEPRECATED! USED THE MBERECIPE.self.ts_print FUNCTION!!!!!
@@ -66,6 +67,7 @@ class MBERecipe:
             if self.stdby_at_exit:
                 self.set_stdby()
             self.decrement_recipes_running()  # Decrement number of recipes flag
+            self.set_process_interlock(False)
             self.conn.close()  # Close MBE server connection
 
     def ts_print(self, string):
@@ -94,6 +96,7 @@ class MBERecipe:
         """
         self.recipeStarted = True
         self.increment_recipes_running()
+        self.set_process_interlock(True)
 
     def get_param(self, parameter):
         """
@@ -241,13 +244,11 @@ class MBERecipe:
         self.ts_print("Timer is up!")
         return
 
-    def as_capping(self, capping_time=30, t_capping=10, post_anneal=True):
+    def as_capping(self, capping_time=20, T_capping=10):
         """
-        Performs an arsenic capping step on the samples (usually done after growth)
+        Performs an arsenic capping step on the samples (usually done after growth to protect from oxidation)
 
-        :type post_anneal: bool
-        :param post_anneal: If true, heats sample to 100 after the As capping to remove excess arsenic (for safety)
-        :param t_capping: temperature of arsenic capping
+        :param T_capping: temperature of arsenic capping
         :param capping_time: the duration of the As capping step (in minutes)
         :type capping_time: float, int
         :return: None, return after capping is done
@@ -255,13 +256,14 @@ class MBERecipe:
         capping_time_sec = 60 * capping_time
 
         # Wait for temperature to drop
-        self.ts_print("Setting manip temperature to {} and waiting...".format(t_capping))
-        self.set_param("Manip.PV.TSP", t_capping)
-        self.wait_to_reach_temp(t_capping, error=2, timeout_on=False)
+        self.ts_print("Setting manip temperature to {} and waiting...".format(T_capping))
+        self.set_param("Manip.PV.TSP", T_capping)
+        self.wait_to_reach_temp(T_capping, error=2, timeout_on=False)
 
         # Begin the As capping
-        self.ts_print("Temperature reached, opening As valve and shutter")
-        self.set_param("AsCracker.Valve.OP", 100)
+        self.ts_print("Temperature reached, starting rotation, opening As valve and shutter")
+        self.set_param("Manip.RS.RPM", -7)
+        self.set_param("AsCracker.Valve.OP", 75)
         self.shutter("As", True)
         self.ts_print("Waiting capping time: {:.2f} min".format(capping_time))
         self.waiting(capping_time_sec)
@@ -270,15 +272,10 @@ class MBERecipe:
         self.set_param("AsCracker.Valve.OP", 0)
         self.set_param("Manip.RS.RPM", 0)
 
-        if post_anneal:
-            # Wait one hour to pump out, before heating up to 100C for short period
-            self.waiting(60 * 60)  # 1 hour wait
-            self.set_param("Manip.PV.Rate", 10)
-            self.set_param("Manip.PV.TSP", 100)
-            self.wait_to_reach_temp(100, error=2)
-            self.waiting(60 * 5)  # 5 min anneal
-            self.set_param("Manip.PV.Rate", 0)
-            self.set_param("Manip.PV.TSP", 20)
+        self.waiting(10 * 60)  # wait 10min
+        self.set_param("Manip.PV.Rate", 20)
+        self.set_param("Manip.PV.TSP", 100)
+        self.wait_to_reach_temp(100, error=2)
 
     def take_pyro_reading(self, datapts=40):
         """
@@ -681,6 +678,23 @@ class MBERecipe:
         if not curr == prev - 1:
             raise Exception("Could not decrease the recipes running flag!")
 
+    def set_process_interlock(self, value):
+        """
+        Sets the process interlock when running a recipe
+        :param value:
+        :return:
+        """
+
+        if type(value) is not bool:
+            raise Exception("Process interlock value must be a boolean!")
+
+        if value:
+            self.conn.send_command("Set this.ProcessInterlock On")
+        else:
+            self.conn.send_command("Set this.ProcessInterlock Off")
+
+
+
     def plot_log(self, filename=None):
         """
         When running a virtual mbe session, sends the command to the mbe server to save and plot the virtual log file
@@ -714,4 +728,7 @@ if __name__ == '__main__':
     # calib_In = Calibration("In")
 
     # mbe.decrement_recipes_running()
-    pass
+    # pass
+    # mbe.set_process_interlock(True)
+    # mbe.as_capping()
+    # mbe.set_process_interlock(False)

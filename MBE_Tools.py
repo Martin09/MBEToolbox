@@ -37,7 +37,7 @@ class StayAliveThread(threading.Thread):
                     if not self.connection.send_command("OK") == "OK":
                         raise RuntimeError("Unexpected answer from server during stayalive signal")
                 except Exception, err:
-                    print "Error: " + err
+                    print "Error: " + str(err)
 
 
 class ServerConnection:
