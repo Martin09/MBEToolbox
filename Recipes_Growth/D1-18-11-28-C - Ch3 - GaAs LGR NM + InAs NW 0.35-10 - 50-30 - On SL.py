@@ -15,6 +15,9 @@ use_pyro = False
 # 10-04-B - Increased temps by 40 degrees because growing on the Ch1 holder. Cracker is only at 600.
 # 11-11-A - Growing for half the time, reverted to old calibration files
 # 11-21-B - Repeat of 11-19-A on doped substrate, while updating temps from IR camera
+# 11-28-C - Repeat from last time, just double checking the temps with IR camera. Especially the InAs growth temp.
+# **Forgot that i commented out the As valve opening last time (to update the recipe with new temps).
+# Therefore this guy is a wrap, heated to 500 without As before I noticed. Calibrated InAs temps though!
 ###########################
 rate_ga = 0.3  # A/s
 ftr_gaas = 80  # five three ratio
@@ -45,9 +48,9 @@ if __name__ == '__main__':
         T_In = calib_In.calc_setpoint_gr(rate_in)  # In temp
 
         # UPDATED THESE, TEMPS SEEM 20 DEGREES LOWER FOR DOPED SUBSTRATES
-        T_Anneal_Manip = 780  # Desired manip temperature (pyro is broken)
-        T_GaAs_Manip = 750  # Desired manip temperature (pyro is broken)
-        T_InAs_Manip = 640  # Desired manip temperature for InAs growth
+        T_Anneal_Manip = 780  # Desired manip temperature (pyro is broken) - 650 in IR camera
+        T_GaAs_Manip = 750  # Desired manip temperature (pyro is broken) - 625 in IR camera
+        T_InAs_Manip = 620  # Desired manip temperature for InAs growth - 510 in IR camera
         # UPDATED THESE
 
         p_as_gaas = calib_Ga.calc_p_arsenic(rate_ga, ftr_gaas)  # Desired As pressure for GaAs growth

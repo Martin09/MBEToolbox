@@ -14,7 +14,6 @@ use_pyro = False
 # 09-04-B - Lowered manip temperature of both GaAs and InAs steps by 20 degrees.
 # 10-04-B - Increased temps by 40 degrees because growing on the Ch1 holder. Cracker is only at 600.
 # 11-11-A - Growing for half the time, reverted to old calibration files
-# 11-21-B - Repeat of 11-19-A on doped substrate, while updating temps from IR camera
 ###########################
 rate_ga = 0.3  # A/s
 ftr_gaas = 80  # five three ratio
@@ -43,18 +42,14 @@ if __name__ == '__main__':
         # Define growth parameters
         T_Ga = calib_Ga.calc_setpoint_gr(rate_ga)  # Ga temp
         T_In = calib_In.calc_setpoint_gr(rate_in)  # In temp
-
-        # UPDATED THESE, TEMPS SEEM 20 DEGREES LOWER FOR DOPED SUBSTRATES
-        T_Anneal_Manip = 780  # Desired manip temperature (pyro is broken)
-        T_GaAs_Manip = 750  # Desired manip temperature (pyro is broken)
-        T_InAs_Manip = 640  # Desired manip temperature for InAs growth
-        # UPDATED THESE
-
+        T_Anneal_Manip = 800  # Desired manip temperature (pyro is broken)
+        T_GaAs_Manip = 770  # Desired manip temperature (pyro is broken)
+        T_InAs_Manip = 660  # Desired manip temperature for InAs growth
         p_as_gaas = calib_Ga.calc_p_arsenic(rate_ga, ftr_gaas)  # Desired As pressure for GaAs growth
         as_valve_gaas = calib_As.calc_setpoint(p_as_gaas)
         p_as_inas = calib_In.calc_p_arsenic(rate_in, ftr_inas)  # Desired As pressure for InAs growth
         as_valve_inas = calib_As.calc_setpoint(p_as_inas)
-        t_anneal = 8 * 60  # 30 minutes
+        t_anneal = 10 * 60  # 30 minutes
         thickness_gaas = 50  # nm
         t_growth_gaas = thickness_gaas * 10 / rate_ga  # Always grow the same thickness of material
         thickness_inas = 30  # nm
@@ -73,7 +68,7 @@ if __name__ == '__main__':
         ts_print("Opening arsenic cracker valve and shutter")
         mbe.set_param("AsCracker.Valve.OP", as_valve_gaas)
         mbe.shutter("As", True)
-        mbe.waiting(60 * 3)  # Wait 3min
+        mbe.waiting(60)  # Wait 1min
         ts_print("Checking pressure")
         if float(mbe.get_param("MBE.P")) < 1e-8:  # Make sure As valve opened properly
             mbe.set_param("Manip.PV.TSP", 200)
