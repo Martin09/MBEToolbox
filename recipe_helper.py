@@ -196,14 +196,28 @@ class MBERecipe:
                 value = "Close"
             else:
                 raise Exception("Error! Shutter boolean undefined!")
-            self.conn.send_command("{} {}".format(value, shutter_name))
-            sleep(0.1)
-            srv_reply = self.conn.send_command("Get Shutter.{}".format(shutter_name))
 
-            if value.lower() == 'close':
-                value = 'closed'
-            if not srv_reply.lower() == value.lower():
-                raise Exception("Error! Could not {} shutter {}".format(value, shutter_name))
+            tries = 1
+            while True:
+                try:
+                    self.conn.send_command("{} {}".format(value, shutter_name))
+                    sleep(0.1)
+                    srv_reply = self.conn.send_command("Get Shutter.{}".format(shutter_name))
+                except RuntimeError:
+                    tries += 1
+                    sleep(0.1)
+                    continue
+
+                if value.lower() == 'close':
+                    value = 'closed'
+
+                if srv_reply.lower() == value.lower():
+                    break
+                else:
+                    tries += 1
+                    sleep(0.1)
+                if tries > 3:
+                    raise Exception("Error! Could not {} shutter {} after 3 tries".format(value, shutter_name))
 
     def timer_start(self):
         """
@@ -244,7 +258,7 @@ class MBERecipe:
         self.ts_print("Timer is up!")
         return
 
-    def as_capping(self, capping_time=20, T_capping=10):
+    def as_capping(self, capping_time=20, T_capping=15):
         """
         Performs an arsenic capping step on the samples (usually done after growth to protect from oxidation)
 
@@ -603,7 +617,7 @@ class MBERecipe:
             "In": {"PV.TSP": 515, "PV.Rate": 15},
             "Ga": {"PV.TSP": 550, "PV.Rate": 40},
             "Al": {"PV.TSP": 750, "PV.Rate": 10},
-            "Sb": {"PV.TSP": 400, "PV.Rate": 5}}
+            "Sb": {"PV.TSP": 380, "PV.Rate": 5}}
         for key, value in stdby_set_dict.iteritems():
             if float(self.get_param("{}.PV".format(key))) <= value["PV.TSP"]:  # Don't ramps up cold cells or manip
                 continue
@@ -693,8 +707,6 @@ class MBERecipe:
         else:
             self.conn.send_command("Set this.ProcessInterlock Off")
 
-
-
     def plot_log(self, filename=None):
         """
         When running a virtual mbe session, sends the command to the mbe server to save and plot the virtual log file
@@ -721,14 +733,18 @@ if __name__ == '__main__':
     mbe = MBERecipe(scriptname='test.py')
     from mbe_calibration import Calibration
 
-    calib_Sb = Calibration("Sb")
-    # calib_As = Calibration("As")
-    # calib_Ga = Calibration("Ga")
+    # calib_Sb = Calibration("Sb")
+    conv_func_As = lambda old_P: 0.861 * old_P + 1.37E-7
+    calib_As = Calibration("As", bfm_correction=conv_func_As)
+    conv_func_Ga = lambda old_P: 0.621 * old_P + 4.58E-10
+    calib_Ga = Calibration("Ga", bfm_correction=conv_func_Ga, rheed_filename="2017-06-30_Ga.txt")
+    calib_Ga_old = Calibration("Ga", filename="2018-08-31_13-51-50_Ga.txt", rheed_filename="2017-06-30_Ga.txt")
+    calib_Ga_new = Calibration("Ga")
     # calib_Al = Calibration("Al")
     # calib_In = Calibration("In")
 
     # mbe.decrement_recipes_running()
-    # pass
+    pass
     # mbe.set_process_interlock(True)
     # mbe.as_capping()
     # mbe.set_process_interlock(False)

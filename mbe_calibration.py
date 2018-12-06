@@ -21,7 +21,7 @@ class Calibration:
     Class for reading MBE flux calibration files
     """
 
-    def __init__(self, material, filename=None, rheed_filename=None, plot=False):
+    def __init__(self, material, filename=None, rheed_filename=None, plot=False, bfm_correction=None):
         """
         Initialize the calibration
 
@@ -31,6 +31,8 @@ class Calibration:
         :type filename: str
         :param plot: whether or not you want to plot the calibration curve (note: need to close graph before script will continue)
         :type plot: bool
+        :param bfm_correction: function which takes the current bfm pressures and outputs a corrected pressure
+        :type bfm_correction: function
         """
         print('Fetching calibration data for {}'.format(material))
         self.mat = material
@@ -53,6 +55,14 @@ class Calibration:
             filepath = calib_path + filename
         self.directory, self.filename = ntpath.split(filepath)
         self.bfm_data = self.read_bfm_file(filepath)
+
+        if bfm_correction is not None:
+            try:
+                self.bfm_data['BFM.P'] = [bfm_correction(dat) for dat in self.bfm_data['BFM.P']]
+            except:
+                print('Error, could not apply BFM correction!')
+                raise
+
         self.spline_interp = self.make_interpolator(self.bfm_data)
         self.bfm_plt_axis = None
         self.rheed_data = None
