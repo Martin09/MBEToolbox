@@ -15,14 +15,14 @@ if __name__ == '__main__':
         mbe.set_param("AsCracker.PV.Rate", 10)
         mbe.set_param("AsCracker.OP.Rate", 0)
 
-        mbe.set_param("AsCracker.Valve.OP", 30)
+        mbe.set_param("AsCracker.Valve.OP", 33)
         mbe.set_param("AsCracker.PV.TSP", T_as_cracker_degas)
         mbe.wait_to_reach_temp(T_as_cracker_degas, PID='AsCracker')
         mbe.set_param("AsCracker.Valve.OP", 0)
 
         mbe.waiting(t_degas)
 
-        mbe.set_param("AsCracker.Valve.OP", 30)
+        mbe.set_param("AsCracker.Valve.OP", 33)
         mbe.set_param("AsCracker.PV.TSP", T_as_cracker_final)
         mbe.wait_to_reach_temp(T_as_cracker_final, PID='AsCracker')
         mbe.set_param("AsCracker.Valve.OP", 0)
