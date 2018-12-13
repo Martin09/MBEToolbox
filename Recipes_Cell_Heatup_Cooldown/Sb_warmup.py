@@ -17,8 +17,8 @@ jamming or breakage of the needle or crucible."
 if __name__ == '__main__':
     with MBERecipe(virtual_server=False, stdby_at_exit=False) as mbe:
         T_sb_tank = 380
-        T_sb_cond = 1100
-        T_sb_cracker = 1200
+        T_sb_cond = 750
+        T_sb_cracker = 800
 
         sb_cond_init_temp = int(float(mbe.get_param("SbCond.PV")))
         sb_cracker_init_temp = int(float(mbe.get_param("SbCracker.PV")))
@@ -28,8 +28,8 @@ if __name__ == '__main__':
         sb_cracker_temps = range(sb_cracker_init_temp, T_sb_cracker, 20)
         sb_cracker_temps.append(T_sb_cracker)
 
-        # mbe.set_param("SbCracker.Valve.OP", 33)  # Open antimony valve
-        mbe.set_param("SbCracker.Valve.OP", 100)  # Open antimony valve
+        mbe.set_param("SbCracker.Valve.OP", 33)  # Open antimony valve
+        # mbe.set_param("SbCracker.Valve.OP", 100)  # Open antimony valve
 
         mbe.set_param("SbCond.Mode", "Auto")
         mbe.set_param("SbCond.PV.Rate", 10)
