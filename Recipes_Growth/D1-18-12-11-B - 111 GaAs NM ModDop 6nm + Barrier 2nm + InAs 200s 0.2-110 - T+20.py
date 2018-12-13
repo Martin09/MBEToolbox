@@ -6,30 +6,56 @@ from recipe_helper import MBERecipe, ts_print
 from mbe_calibration import Calibration
 
 run_virtual_server = False
-use_pyro = False
 
-# Low GR growth, starting with conditions that I am used to (T=630, P_As=4E-6) and just decreasing Ga rate to 0.3 A/s
-# Try InAs with copenhagen growth conditions, no Sb though
-# Cracker is at 950
-# 09-04-B - Lowered manip temperature of both GaAs and InAs steps by 20 degrees.
-# 09-07-A - Using Tr1 holder so increased temps by 40 degrees over square holders
-# 09-07-B - Increased InAs growth temp by 20 degrees to try and get longer, more uniform wires.
-# 09-18-C - Increased V/III ratio from 10 to 100, to see what happens. Should also effectively decrease In diff len.
-# 09-21-C - Decreased InAs growth rate to see if it changes morphology.
+# Combination of the optimized InGaAs NW recipe yielding 50/50 Ga/In ratio in wires with modulation doping
+# Combined recipe D1-17-09-03-B (mod doping) with growth parameters from D1-18-09-21-C (In @ 0.2 A/s, FTR of 100).
+
 ###########################
-rate_ga = 0.3  # A/s
-ftr_gaas = 80  # five three ratio
+rate_ga = 1.0  # A/s
+ftr_gaas = 25  # five three ratio
 rate_in = 0.2  # A/s
-ftr_inas = 100  # five three ratio
+ftr_inas = 110  # five three ratio
 ###########################
 
 # If running the script locally:
 if __name__ == '__main__':
-    calib_In = Calibration("In")
-    calib_Ga = Calibration("Ga")
-    calib_As = Calibration("As")
+    calib_In = Calibration("In", filename="2018-08-31_14-55-37_In.txt")
+    calib_Ga = Calibration("Ga", filename="2018-08-31_13-51-50_Ga.txt", rheed_filename="2017-06-30_Ga.txt")
+    calib_As = Calibration("As", filename="2018-10-02_17-45-23_As.txt")
 
     with MBERecipe(virtual_server=run_virtual_server) as mbe:
+
+        ts_print("Setting variables")
+        # Define growth parameters
+        T_Ga = calib_Ga.calc_setpoint_gr(rate_ga)  # Ga temp
+        T_In = calib_In.calc_setpoint_gr(rate_in)  # In temp
+        T_Anneal_Manip = 760  # Desired manip temperature (pyro is broken)
+        T_GaAs_Manip = 750  # Desired manip temperature (pyro is broken)
+        T_InAs_Manip = 640 + 20  # Desired manip temperature for InAs growth
+        p_as_gaas = calib_Ga.calc_p_arsenic(rate_ga, ftr_gaas)  # Desired As pressure for GaAs growth
+        p_as_inas = calib_In.calc_p_arsenic(rate_in, ftr_inas)  # Desired As pressure for InAs growth
+        as_valve_gaas = calib_As.calc_setpoint(p_as_gaas)
+        as_valve_inas = calib_As.calc_setpoint(p_as_inas)
+        t_anneal = 10 * 60  # 10 minutes
+        growth_rate_nanomembranes = 300.0 / 30.0 / 60.0  # ~300nm/30min/60sec
+        thickness_dop = 6  # 6nm thick doped layer
+        thickness_barrier = 2  # 2nm thick barrier
+        t_growth_gaas = 30 * 60  # 30 minutes
+        t_growth_dop = thickness_dop / growth_rate_nanomembranes
+        t_growth_barrier = thickness_barrier / growth_rate_nanomembranes
+        thickness_inas = 4  # nm
+        t_growth_inas = thickness_inas * 10 / rate_in  # Always grow the same thickness of material
+        Si_current = 40  # 40A
+
+        print("T_Ga: {:.0f} deg C".format(T_Ga))
+        print("T_In: {:.0f} deg C".format(T_In))
+        print("p_as_gaas: {:.2e} Torr".format(p_as_gaas))
+        print("p_as_inas: {:.2e} Torr".format(p_as_inas))
+        print("as_valve_gaas: {:.2f}%".format(as_valve_gaas))
+        print("as_valve_inas: {:.2f}%".format(as_valve_inas))
+        print("t_growth_dop: {:.2f}s".format(t_growth_dop))
+        print("t_growth_inas: {:.2f}s".format(t_growth_inas))
+
         # Prompt user if they are sure
         mbe.starting_growth_prompt()
 
@@ -39,23 +65,6 @@ if __name__ == '__main__':
 
         # Increment number of recipes flag and set recipes running to true
         mbe.start_recipe()
-        ts_print("Setting variables")
-
-        # Define growth parameters
-        T_Ga = calib_Ga.calc_setpoint_gr(rate_ga)  #Ga temp
-        T_In = calib_In.calc_setpoint_gr(rate_in)  #In temp
-        T_Anneal_Manip = 800  # Desired manip temperature (pyro is broken)
-        T_GaAs_Manip = 770  # Desired manip temperature (pyro is broken)
-        T_InAs_Manip = 680  # Desired manip temperature for InAs growth
-        p_as_gaas = calib_Ga.calc_p_arsenic(rate_ga, ftr_gaas)  # Desired As pressure for GaAs growth
-        as_valve_gaas = calib_As.calc_setpoint(p_as_gaas)
-        p_as_inas = calib_In.calc_p_arsenic(rate_in, ftr_inas)  # Desired As pressure for InAs growth
-        as_valve_inas = calib_As.calc_setpoint(p_as_inas)
-        t_anneal = 10 * 60  # 30 minutes
-        thickness_gaas = 100  # nm
-        t_growth_gaas = thickness_gaas * 10 / rate_ga  # Always grow the same thickness of material
-        thickness_inas = 63  # nm
-        t_growth_inas = thickness_inas * 10 / rate_in  # Always grow the same thickness of material
 
         # Check that MBE parameters are in standby mode
         ts_print("Checking standby conditions")
@@ -70,7 +79,7 @@ if __name__ == '__main__':
         ts_print("Opening arsenic cracker valve and shutter")
         mbe.set_param("AsCracker.Valve.OP", as_valve_gaas)
         mbe.shutter("As", True)
-        mbe.waiting(60 * 3)  # Wait 3min
+        mbe.waiting(60 * 1)  # Wait 1min
         ts_print("Checking pressure")
         if float(mbe.get_param("MBE.P")) < 1e-8:  # Make sure As valve opened properly
             mbe.set_param("Manip.PV.TSP", 200)
@@ -90,15 +99,16 @@ if __name__ == '__main__':
         mbe.set_param("In.PV.Rate", 15)
         mbe.set_param("In.OP.Rate", 0)
         mbe.set_param("In.PV.TSP", T_In)
+        ts_print("Ramping up SUSI cell")
+        mbe.set_param("SUSI.Mode", "Manual")
+        mbe.set_param("SUSI.OP.Rate", 2)
+        mbe.set_param("SUSI.OP.TSP", Si_current)
 
         ##############################################################################
         # Anneal sample
         ##############################################################################
         mbe.wait_to_reach_temp(T_Anneal_Manip)
-        mbe.timer_start()
-        if use_pyro:
-            mbe.converge_to_temp(T_Anneal_Manip)  # Takes about 4min
-        mbe.timer_wait(t_anneal)
+        mbe.waiting(t_anneal)
 
         ##############################################################################
         # GaAs Membrane
@@ -107,15 +117,18 @@ if __name__ == '__main__':
         ts_print("Going to GaAs growth conditions, setting manip to {}".format(T_GaAs_Manip))
         mbe.set_param("Manip.PV.Rate", 30)
         mbe.set_param("Manip.PV.TSP", T_GaAs_Manip)
+
         # Wait until growth temperature is reached
         mbe.wait_to_reach_temp(T_GaAs_Manip)
-        if use_pyro:
-            mbe.converge_to_temp(T_GaAs_Manip)  # Takes about 4min
 
         # Open Ga shutter and start growth
         ts_print("Opening Ga shutter and waiting growth time")
         mbe.shutter("Ga", True)
-        mbe.waiting(t_growth_gaas)  # Wait Growth Time
+        mbe.waiting(t_growth_gaas - t_growth_dop - t_growth_barrier)  # Wait Growth Time
+        mbe.shutter("SUSI", True)
+        mbe.waiting(t_growth_dop)  # Wait doped layer growth time
+        mbe.shutter("SUSI", False)
+        mbe.waiting(t_growth_barrier)  # Wait barrier growth time
         mbe.shutter("Ga", False)
 
         # Ramp down Ga
@@ -129,16 +142,11 @@ if __name__ == '__main__':
         # Go to InAs growth temp
         ts_print("Going to InAs growth conditions, setting manip to {}".format(T_InAs_Manip))
         mbe.set_param("Manip.PV.Rate", 30)
-
         mbe.set_param("Manip.PV.TSP", T_InAs_Manip)
         mbe.wait_to_reach_temp(T_InAs_Manip, error=1)
 
-        # Set As flux
+        # Set As flux, let it open during final temperature convergence
         mbe.set_param("AsCracker.Valve.OP", as_valve_inas)
-        mbe.waiting(30)  # Wait for cracker valve to open
-
-        if use_pyro:
-            mbe.converge_to_temp(T_InAs_Manip)  # Takes about 4min
 
         # Start InAs Growth
         ts_print("Opening In shutter and waiting growth time")
@@ -147,6 +155,9 @@ if __name__ == '__main__':
         ts_print("Closing In shutter")
         mbe.shutter("In", False)
 
+        ts_print("Close As valve a bit during cool-down")
+        mbe.set_param("AsCracker.Valve.OP", as_valve_gaas)
+
         ##############################################################################
         # Cool Down Cells
         ##############################################################################
@@ -154,6 +165,7 @@ if __name__ == '__main__':
         mbe.set_param("In.PV.TSP", 515)
         mbe.set_param("Manip.PV.Rate", 100)
         mbe.set_param("Manip.PV.TSP", 200)
+        mbe.set_param("SUSI.OP.TSP", 10)
         mbe.wait_to_reach_temp(200, error=3)
         ts_print("Temperature reached 200, closing As valve and shutter")
         mbe.shutter("As", False)
