@@ -1,7 +1,6 @@
 """
 Performs a flux calibration of the As cell
 """
-
 from recipe_helper import MBERecipe, ts_print
 from time import strftime
 
@@ -10,7 +9,8 @@ from time import strftime
 # Very short calibration
 # values = [0, 20, 40, 60, 80, 100]
 # Short calibration
-values = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+# values = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+values = [0, 10, 15, 20, 25, 30, 35, 40]
 # Long calibration
 # values = [10, 15, 20, 25, , 30, 35, 40, 45, 50, 52, 60, 80, 100]
 
@@ -24,18 +24,18 @@ mat = "As"
 standby_value = 0
 #################################
 
+filename = r"\\MBESERVER\Documents\Calibrations_D1" + "\\" + strftime("%Y-%m-%d_%H-%M-%S_" + mat + ".txt")
+
 # If running the script locally:
 if __name__ == '__main__':
+    grow = raw_input('Starting a growth! Are you sure? (y/n):  ')
+    if not (grow.lower() == 'y'):
+        print('Exiting...')
+        exit()
+    else:
+        print('Starting growth!')
 
     with MBERecipe(virtual_server=False) as mbe:
-
-        T_crack = int(float(mbe.get_param("AsCracker.PV")))
-
-        filename = r"\\MBESERVER\Documents\Calibrations_D1" + "\\" + strftime("%Y-%m-%d_%H-%M-%S") + "_TCrck" + \
-                   str(T_crack) + "_" + mat + ".txt"
-
-        mbe.starting_growth_prompt()
-
         # Check that no other recipes are already running
         if not mbe.get_recipes_running() == 0:
             raise Exception("At least one recipe is running!")
@@ -63,13 +63,14 @@ if __name__ == '__main__':
 
             ts_print("Opening shutter and making measurement")
             mbe.shutter(mat, True)  # Open shutter
-            pressure, background, p_std, b_std = mbe.read_pressures(max_t=30, n=10, error=0.01)
-            mbe.shutter(mat, False)  # Close shutter
 
+            pressure, background, p_std, b_std = mbe.read_pressures(max_t=30, n=10, error=0.01)
             f = open(filename, "a")
             f.write("{:.0f}\t{:.6E}\t{:.6E}\t{:.6E}\t{:.6E}\n".format(value, pressure, background, p_std, b_std))
             f.close()
             ts_print("Pressure: " + str(pressure) + " (stored to file)")
+
+            mbe.shutter(mat, False)  # Close shutter
 
         mbe.set_stdby()  # Set MBE to standby conditions
 

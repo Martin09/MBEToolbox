@@ -20,6 +20,8 @@ if __name__ == '__main__':
         T_sb_cond = 750
         T_sb_cracker = 800
 
+        mbe.starting_growth_prompt()
+
         sb_cond_init_temp = int(float(mbe.get_param("SbCond.PV")))
         sb_cracker_init_temp = int(float(mbe.get_param("SbCracker.PV")))
 

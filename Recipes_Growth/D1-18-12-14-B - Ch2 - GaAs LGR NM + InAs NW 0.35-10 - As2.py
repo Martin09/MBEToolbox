@@ -14,9 +14,8 @@ use_pyro = False
 # 09-04-B - Lowered manip temperature of both GaAs and InAs steps by 20 degrees.
 # 10-04-B - Increased temps by 40 degrees because growing on the Ch1 holder. Cracker is only at 600.
 # 10-18-A - Added pause after Ga shutter close to check that it is indeed closed.
-# 12-12-B - Repeating of growth from 18-10-20-D to check conditions with new calibration files/conversion function.
-# 12-12-C - Same as 12-12-B, just without InAs on top.
-# 12-13-C - Same as 12-12-C but just a lower temperature initial annealing step (750 -> 700). Should be ~610C on subs.
+# 12-12-B - Repeating of growth from 18-10-20-D to check conditions with new calibration files/conversion function
+# 12-14-B - Same recipe, just now using As2 instead of As4
 ###########################
 rate_ga = 0.3  # A/s
 ftr_gaas = 80  # five three ratio
@@ -28,7 +27,7 @@ ftr_inas = 10  # five three ratio
 if __name__ == '__main__':
     # Conversion function used to convert from pressures read by new BFM to the old BFM (changed mid-Oct 2018)
     conv_func_As = lambda old_P: 0.861 * old_P + 1.37E-7
-    calib_As = Calibration("As", bfm_correction=conv_func_As, filename="2018-10-02_17-45-23_As.txt")
+    calib_As = Calibration("As", bfm_correction=conv_func_As, filename="2018-12-14_11-14-22_TCrck950_As.txt")
     conv_func_GroupIII = lambda old_P: 0.621 * old_P + 4.58E-10
     calib_In = Calibration("In", bfm_correction=conv_func_GroupIII, filename="2018-10-30_16-50-59_In.txt",
                            rheed_filename="2017-06-30_In.txt")
@@ -40,7 +39,7 @@ if __name__ == '__main__':
     T_Ga = calib_Ga.calc_setpoint_gr(rate_ga)  # Ga temp
     T_In = calib_In.calc_setpoint_gr(rate_in)  # In temp
     # --- Manipulator temperatures --- #
-    T_Anneal_Manip = 750  # Desired manip temperature (pyro is broken)
+    T_Anneal_Manip = 800  # Desired manip temperature (pyro is broken)
     T_GaAs_Manip = 770  # Desired manip temperature (pyro is broken)
     T_InAs_Manip = 660  # Desired manip temperature for InAs growth
     # --- Group V pressures --- #
@@ -52,7 +51,7 @@ if __name__ == '__main__':
     as_valve_gaas = calib_As.calc_setpoint(p_as_gaas)
     as_valve_inas = calib_As.calc_setpoint(p_as_inas)
     # --- Timing --- #
-    t_anneal = 10 * 60  # 10 minutes
+    t_anneal = 10 * 60  # 30 minutes
     thickness_gaas = 100  # nm
     t_growth_gaas = thickness_gaas * 10 / rate_ga  # Always grow the same thickness of material
     thickness_inas = 63  # nm
@@ -110,9 +109,9 @@ if __name__ == '__main__':
         mbe.set_param("Ga.PV.Rate", 40)
         mbe.set_param("Ga.OP.Rate", 0)
         mbe.set_param("Ga.PV.TSP", T_Ga)
-        #mbe.set_param("In.PV.Rate", 15)
-       # mbe.set_param("In.OP.Rate", 0)
-      #  mbe.set_param("In.PV.TSP", T_In)
+        mbe.set_param("In.PV.Rate", 15)
+        mbe.set_param("In.OP.Rate", 0)
+        mbe.set_param("In.PV.TSP", T_In)
 
         ##############################################################################
         # Anneal sample
@@ -144,22 +143,22 @@ if __name__ == '__main__':
         ##############################################################################
 
         # Go to InAs growth temp
- #       ts_print("Going to InAs growth conditions, setting manip to {}".format(T_InAs_Manip))
-  #      mbe.set_param("Manip.PV.Rate", 30)
+        ts_print("Going to InAs growth conditions, setting manip to {}".format(T_InAs_Manip))
+        mbe.set_param("Manip.PV.Rate", 30)
 
- #       mbe.set_param("Manip.PV.TSP", T_InAs_Manip)
- #       mbe.wait_to_reach_temp(T_InAs_Manip, error=1)
+        mbe.set_param("Manip.PV.TSP", T_InAs_Manip)
+        mbe.wait_to_reach_temp(T_InAs_Manip, error=1)
 
         # Set As flux
-   #     mbe.set_param("AsCracker.Valve.OP", as_valve_inas)
-   #     mbe.waiting(10)  # Wait for cracker valve to open
+        mbe.set_param("AsCracker.Valve.OP", as_valve_inas)
+        mbe.waiting(10)  # Wait for cracker valve to open
 
         # Start InAs Growth
-   #     ts_print("Opening In shutter and waiting growth time")
- #       mbe.shutter("In", True)
- #       mbe.waiting(t_growth_inas)  # Wait Growth Time
-  #      ts_print("Closing In shutter")
-   #     mbe.shutter("In", False)
+        ts_print("Opening In shutter and waiting growth time")
+        mbe.shutter("In", True)
+        mbe.waiting(t_growth_inas)  # Wait Growth Time
+        ts_print("Closing In shutter")
+        mbe.shutter("In", False)
 
         ##############################################################################
         # Cool Down Cells

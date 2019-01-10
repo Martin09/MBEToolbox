@@ -16,10 +16,10 @@ use_pyro = False
 # 10-18-A - Added pause after Ga shutter close to check that it is indeed closed.
 # 12-12-B - Repeating of growth from 18-10-20-D to check conditions with new calibration files/conversion function.
 # 12-12-C - Same as 12-12-B, just without InAs on top.
-# 12-13-C - Same as 12-12-C but just a lower temperature initial annealing step (750 -> 700). Should be ~610C on subs.
+# 12-17-E - Trying with 2x the group V pressure to see what faceting it gives
 ###########################
 rate_ga = 0.3  # A/s
-ftr_gaas = 80  # five three ratio
+ftr_gaas = 160  # five three ratio
 rate_in = 0.35  # A/s
 ftr_inas = 10  # five three ratio
 ###########################
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     T_Ga = calib_Ga.calc_setpoint_gr(rate_ga)  # Ga temp
     T_In = calib_In.calc_setpoint_gr(rate_in)  # In temp
     # --- Manipulator temperatures --- #
-    T_Anneal_Manip = 750  # Desired manip temperature (pyro is broken)
+    T_Anneal_Manip = 800  # Desired manip temperature (pyro is broken)
     T_GaAs_Manip = 770  # Desired manip temperature (pyro is broken)
     T_InAs_Manip = 660  # Desired manip temperature for InAs growth
     # --- Group V pressures --- #
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     as_valve_gaas = calib_As.calc_setpoint(p_as_gaas)
     as_valve_inas = calib_As.calc_setpoint(p_as_inas)
     # --- Timing --- #
-    t_anneal = 10 * 60  # 10 minutes
+    t_anneal = 10 * 60  # 30 minutes
     thickness_gaas = 100  # nm
     t_growth_gaas = thickness_gaas * 10 / rate_ga  # Always grow the same thickness of material
     thickness_inas = 63  # nm

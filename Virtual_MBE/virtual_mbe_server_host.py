@@ -166,7 +166,7 @@ class VirtualMBE:
                           'in.op': 0.0, 'in.op.rate': 0, 'in.op.tsp': 0, 'in.mode': 'pid',
                           'as.pv': 375, 'as.pv.rate': 0, 'as.pv.tsp': 375,
                           'as.op': 0.0, 'as.op.rate': 0, 'as.op.tsp': 0, 'as.mode': 'pid',
-                          'sb.pv': 250, 'sb.pv.rate': 0, 'sb.pv.tsp': 250,
+                          'sb.pv': 380, 'sb.pv.rate': 0, 'sb.pv.tsp': 380,
                           'sb.op': 0.0, 'sb.op.rate': 0, 'sb.op.tsp': 0, 'sb.mode': 'pid',
                           'al.pv': 750, 'al.pv.rate': 0, 'al.pv.tsp': 750,
                           'al.op': 0.0, 'al.op.rate': 0, 'al.op.tsp': 0, 'al.mode': 'pid',

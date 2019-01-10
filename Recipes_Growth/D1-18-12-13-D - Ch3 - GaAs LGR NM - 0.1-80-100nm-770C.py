@@ -16,8 +16,9 @@ use_pyro = False
 # 10-18-A - Added pause after Ga shutter close to check that it is indeed closed.
 # 12-12-B - Repeating of growth from 18-10-20-D to check conditions with new calibration files/conversion function.
 # 12-12-C - Same as 12-12-B, just without InAs on top.
+# 12-12-D - Trying lower Ga rate... but might need to increase FTR next time...
 ###########################
-rate_ga = 0.3  # A/s
+rate_ga = 0.1  # A/s
 ftr_gaas = 80  # five three ratio
 rate_in = 0.35  # A/s
 ftr_inas = 10  # five three ratio
