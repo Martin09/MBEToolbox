@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 """
 Some functions that help in MBE growth
 """
-# TODO: implement the Sb cell commands!
+
 from datetime import datetime
 from time import sleep, clock
 import numpy as np
@@ -208,16 +207,16 @@ class MBERecipe:
                     sleep(0.1)
                     continue
 
-                if value.lower() == 'close':
-                    value = 'closed'
-
-                if srv_reply.lower() == value.lower():
+                if value.lower() == 'close' and srv_reply.lower() == "closed":
+                    break
+                elif value.lower() == 'open' and srv_reply.lower() == "open":
                     break
                 else:
                     tries += 1
                     sleep(0.1)
-                if tries > 3:
-                    raise Exception("Error! Could not {} shutter {} after 3 tries".format(value, shutter_name))
+
+            if tries > 3:
+                raise Exception("Error! Could not {} shutter {} after 3 tries".format(value, shutter_name))
 
     def timer_start(self):
         """
@@ -735,7 +734,7 @@ if __name__ == '__main__':
 
     # calib_Sb = Calibration("Sb")
     conv_func_As = lambda old_P: 0.861 * old_P + 1.37E-7
-    calib_As = Calibration("As", bfm_correction=conv_func_As)
+    # calib_As = Calibration("As", bfm_correction=conv_func_As)
     conv_func_Ga = lambda old_P: 0.621 * old_P + 4.58E-10
     calib_Ga = Calibration("Ga", bfm_correction=conv_func_Ga, rheed_filename="2017-06-30_Ga.txt")
     calib_Ga_old = Calibration("Ga", filename="2018-08-31_13-51-50_Ga.txt", rheed_filename="2017-06-30_Ga.txt")
@@ -745,6 +744,6 @@ if __name__ == '__main__':
 
     # mbe.decrement_recipes_running()
     pass
-    # mbe.set_process_interlock(True)
-    # mbe.as_capping()
-    # mbe.set_process_interlock(False)
+# mbe.set_process_interlock(True)
+# mbe.as_capping()
+#     mbe.set_process_interlock(False)

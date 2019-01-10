@@ -19,9 +19,9 @@ jamming or breakage of the needle or crucible."
 
 if __name__ == '__main__':
     with MBERecipe(virtual_server=False) as mbe:
-        T_stdby_sb_tank = 380
-        T_stdby_sb_cond = 600
-        T_stdby_sb_cracker = 700
+        T_stdby_sb_tank = 60
+        T_stdby_sb_cond = 60
+        T_stdby_sb_cracker = 60
 
         if not T_stdby_sb_cracker > T_stdby_sb_cond:
             ValueError("Cracker temp must always be greater than conductance temp!")
