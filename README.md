@@ -65,4 +65,5 @@ A second big motivation behind moving to a Python environment was the ability to
 
 I therefore incorporated a virtual MBE server host which can be run in parallel with the real MBE server host. When the user wants to test their recipe, they only need to set a flag and all of the recipe commands get sent to the virtual MBE host server instead of the real one. After the growth is finished, the virtual MBE server outputs a log file and a PNG image summarizing the growth for the grower to consult. Though it's not a vectorized format, PNG was chosen as the output format for easier scrolling and viewing in the Windows file explorer (compared to PDF).
 
-An example of the output from a virtual growth is shown here:
+An example of the output from a virtual MBE growth is shown here:
+![Virtual MBE Growth](https://github.com/Martin09/MBEToolbox/raw/master/Virtual_MBE_Output/ExampleVirtualMBEOutput.png)
