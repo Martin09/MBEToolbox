@@ -147,26 +147,27 @@ class Calibration:
 
         # Initialize search for the latest file
         latestfile = files[0]
-        file_naming_format1 = '%Y-%m-%d_%H-%M-%S_{:s}.txt'.format(self.mat)
-        file_naming_format2 = '%Y-%m-%d_{:s}.txt'.format(self.mat)  # No time values
+        file_naming_format1 = '%Y-%m-%d_%H-%M-%S'
+        file_naming_format2 = '%Y-%m-%d'  # No time values
 
         try:
-            latest = datetime.strptime(latestfile[1], file_naming_format1)
+
+            latest = datetime.strptime('_'.join(latestfile[1].split('_')[:2]), file_naming_format1)
         except:  # Probably doesn't have time values
-            latest = datetime.strptime(latestfile[1], file_naming_format2)
+            latest = datetime.strptime('_'.join(latestfile[1].split('_')[:1]), file_naming_format2)
 
         # Loop over all files, extract the latest file
         for pathname, filename in files:
             try:
-                curr = datetime.strptime(filename, file_naming_format1)
+                curr = datetime.strptime('_'.join(filename.split('_')[:2]), file_naming_format1)
                 if curr > latest:
                     latestfile = [pathname, filename]
-                    latest = datetime.strptime(latestfile[1], file_naming_format1)
+                    latest = datetime.strptime('_'.join(filename.split('_')[:2]), file_naming_format1)
             except:  # Probably doesn't have time values
-                curr = datetime.strptime(filename, file_naming_format2)
+                curr = datetime.strptime('_'.join(filename.split('_')[:1]), file_naming_format2)
                 if curr > latest:
                     latestfile = [pathname, filename]
-                    latest = datetime.strptime(latestfile[1], file_naming_format2)
+                    latest = datetime.strptime('_'.join(filename.split('_')[:1]), file_naming_format2)
 
         return latestfile[0] + '/' + latestfile[1]
 

@@ -6,11 +6,12 @@ from time import strftime
 import numpy as np
 
 # Short calibration
-values = np.linspace(1100, 1000, 6)
+values = np.linspace(1120, 1000, 7)
+# values = np.linspace(1000, 1120, 7)
 # Long calibration
 # values = np.linspace(1120, 1000, 7)
 
-t_stabilize = 300  # 5 minutes
+t_stabilize = 5 * 60  # 5 minutes
 
 #################################
 # Modify this for each material

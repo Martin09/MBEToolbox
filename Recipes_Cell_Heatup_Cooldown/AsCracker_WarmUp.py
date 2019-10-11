@@ -4,7 +4,7 @@ from mbe_calibration import Calibration
 T_as_cracker_final = 950
 T_as_cracker_degas = 1200
 t_degas = 60 * 15  # degas for 15 minutes
-degas = False
+degas = True
 
 if __name__ == '__main__':
     with MBERecipe(virtual_server=False) as mbe:

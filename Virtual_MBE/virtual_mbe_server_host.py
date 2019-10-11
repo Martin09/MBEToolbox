@@ -365,7 +365,7 @@ class VirtualMBE:
         df3 = df.filter(regex="^shutter.")
         for i, col in enumerate(df3.columns):
             df3[col] = df3[col] == 'open'
-            df3[col] = df3[col].apply(int) * (.9 + (i / 20.))
+            df3[col] = df3[col].apply(int) * (1.3 - (i / 20.))
         df3['time_in_min'] = df3.index / 60.0
 
         colors1 = plt.cm.gist_rainbow(np.linspace(0, 1, 6))

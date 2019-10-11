@@ -1,7 +1,4 @@
-"""
-Example of a growth recipe for nanomembranes with InAs nanowires on top.
-Requires the new MBE_Toolbox
-"""
+
 from recipe_helper import MBERecipe, ts_print
 from mbe_calibration import Calibration
 

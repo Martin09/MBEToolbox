@@ -2,12 +2,13 @@
 Some functions that help in MBE growth
 """
 
+import numpy as np
 from datetime import datetime
 from time import sleep, clock
-import numpy as np
 
 from MBE_Tools import ServerConnection
 from Virtual_MBE.virtual_mbe_server_client import Connect
+from mbe_calibration import Calibration
 
 
 def ts_print(string):
@@ -257,26 +258,29 @@ class MBERecipe:
         self.ts_print("Timer is up!")
         return
 
-    def as_capping(self, capping_time=20, T_capping=15):
+    def as_capping(self, capping_time=20, temp_capping=15, p_as=1E-5):
         """
         Performs an arsenic capping step on the samples (usually done after growth to protect from oxidation)
 
-        :param T_capping: temperature of arsenic capping
+        :param temp_capping: temperature of arsenic capping
         :param capping_time: the duration of the As capping step (in minutes)
         :type capping_time: float, int
         :return: None, return after capping is done
         """
+        calib_as = Calibration("As")
+        as_valve = calib_as.calc_setpoint(p_as)
+
         capping_time_sec = 60 * capping_time
 
         # Wait for temperature to drop
-        self.ts_print("Setting manip temperature to {} and waiting...".format(T_capping))
-        self.set_param("Manip.PV.TSP", T_capping)
-        self.wait_to_reach_temp(T_capping, error=2, timeout_on=False)
+        self.ts_print("Setting manip temperature to {} and waiting...".format(temp_capping))
+        self.set_param("Manip.PV.TSP", temp_capping)
+        self.wait_to_reach_temp(temp_capping, error=2, timeout_on=False)
 
         # Begin the As capping
         self.ts_print("Temperature reached, starting rotation, opening As valve and shutter")
         self.set_param("Manip.RS.RPM", -7)
-        self.set_param("AsCracker.Valve.OP", 75)
+        self.set_param("AsCracker.Valve.OP", as_valve)
         self.shutter("As", True)
         self.ts_print("Waiting capping time: {:.2f} min".format(capping_time))
         self.waiting(capping_time_sec)
@@ -572,8 +576,8 @@ class MBERecipe:
             "AsCracker.PV": (595, 1005),
             # "Sb.PV": (245, 255),  # Double check this! ****************************
             # "SbCracker.PV": (795, 805),  # Double check this! ****************************
-            "SUKO.OP": (0, 40),
-            "SUSI.OP": (0, 11)}
+            "SUKO.OP": (-0.1, 10.1),
+            "SUSI.OP": (-0.1, 10.1)}
         for param, val in stdby_chk_dict.iteritems():
             value = float(self.get_param(param))
             if not (val[0] < value < val[1]):
@@ -627,14 +631,18 @@ class MBERecipe:
         # Ramp down all Manual doping cells to standby values)
         stdby_set_doping_dict = {
             "SUKO": {"OP.TSP": 10, "OP.Rate": 2},
-            "SUSI": {"OP.TSP": 10, "OP.Rate": 2}}
+            # "SUSI": {"OP.TSP": 10, "OP.Rate": 2}
+                                }
         for key, value in stdby_set_doping_dict.iteritems():
             self.set_param("{}.Mode".format(key), "Manual")
             self.set_param("{}.OP.Rate".format(key), value["OP.Rate"])
             self.set_param("{}.OP.TSP".format(key), value["OP.TSP"])
 
-        # Retract BFM
-        self.bfm(insert=False)
+        # # Retract BFM, if it throws an error, don't worry about it (ex: loss of communication), deal with it later
+        # try:
+        #     self.bfm(insert=False)
+        # except:
+        #     pass
 
     def reinit_cells(self, cell):
         """
@@ -733,17 +741,22 @@ if __name__ == '__main__':
     from mbe_calibration import Calibration
 
     # calib_Sb = Calibration("Sb")
-    conv_func_As = lambda old_P: 0.861 * old_P + 1.37E-7
+    # conv_func_As = lambda old_P: 0.861 * old_P + 1.37E-7
     # calib_As = Calibration("As", bfm_correction=conv_func_As)
-    conv_func_Ga = lambda old_P: 0.621 * old_P + 4.58E-10
-    calib_Ga = Calibration("Ga", bfm_correction=conv_func_Ga, rheed_filename="2017-06-30_Ga.txt")
-    calib_Ga_old = Calibration("Ga", filename="2018-08-31_13-51-50_Ga.txt", rheed_filename="2017-06-30_Ga.txt")
-    calib_Ga_new = Calibration("Ga")
+    # conv_func_Ga = lambda old_P: 0.621 * old_P + 4.58E-10
+    # calib_Ga = Calibration("Ga")
+    # calib_Ga_old = Calibration("Ga", filename="2018-08-31_13-51-50_Ga.txt", rheed_filename="2017-06-30_Ga.txt")
+    # calib_Ga_new = Calibration("Ga")
     # calib_Al = Calibration("Al")
     # calib_In = Calibration("In")
 
     # mbe.decrement_recipes_running()
-    pass
-# mbe.set_process_interlock(True)
-# mbe.as_capping()
-#     mbe.set_process_interlock(False)
+    # pass
+    # mbe.set_process_interlock(True)
+    # mbe.as_capping()
+    #     mbe.set_process_interlock(False)
+
+    # mbe.set_param('SbCracker.PV.Rate',10)
+    # mbe.get_param('SbCracker.PV.TSP')
+    # mbe.get_param('SbCracker.Valve')
+    # mbe.set_param('SbCracker.Valve.OP', 0)

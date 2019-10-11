@@ -1,0 +1,73 @@
+# growth InAs on GaAs(111)  (Heidi)
+# repeat Sb series for Terahertz
+# standard InAs reference sample without Sb
+# arsenic BEP should be 1.9E-6 Torr
+# indium BEP should be 1.4E-7 Torr
+
+
+# Ensure no recipe starts if the standby conditions are not met:
+Include "CheckStandby_August2014.txt"
+
+# Define growth parameters
+
+Define T_In = 790
+#Define T_Sb = 380
+#Define T_SbCracker = 800
+#Define T_SbCond = 800
+Define T_Manip = 750
+Define As_Valve = 30
+Define Growth_Time = 60min
+
+#Start rotation and ramp up cells
+Set Manip.RS.RPM 7
+Set Manip.PV.Rate 30
+Set Manip.PV.TSP $T_Manip$
+Set Manip.OP.Rate 0
+Set In.PV.Rate 15
+Set In.OP.Rate 0
+Set In.PV.TSP $T_In$
+# Sb rates cannot be set, needs to be done manually before the growth
+#Set Sb.PV.TSP $T_Sb$
+#Set SbCracker.PV.TSP $T_SbCracker$
+#Set SbCond.PV.TSP $T_SbCond$
+#Open Sb
+Set AsCracker.Valve.OP $As_Valve$
+Wait 2min
+Open As
+
+Wait 30min
+#Calculate waitT = $T_Manip$ - 3
+#Wait Until  Manip.PV > $waitT$
+
+# record pyrometer temperature
+Open Pyrometer
+Wait 1min
+Close Pyrometer
+
+Wait 29min
+
+# record pyrometer temperature
+Wait 1min
+Open Pyrometer
+Wait 1min
+Close Pyrometer
+
+# InAs growth
+Open In
+Wait $Growth_Time$
+Close In
+#Close Sb
+
+# Close shutters,valves and go back to standby
+
+Set In.PV.Rate 15
+Set In.PV.TSP 515
+#Set Sb.PV.TSP 100
+#Set SbCracker.PV.TSP 500
+#Set SbCond.PV.TSP 500
+Set Manip.PV.TSP 200
+Set Manip.PV.Rate 100
+Wait Until  Manip.PV < 250
+Close As
+Set AsCracker.Valve.OP 0
+Set Manip.RS.RPM 0
