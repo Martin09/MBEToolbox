@@ -21,7 +21,7 @@ ftr_inas = 10  # five three ratio
 
 # If running the script locally:
 if __name__ == '__main__':
-    calib_In = Calibration("In")
+    calib_In = Calibration("In", filename="2018-08-31_14-55-37_In.txt")
     calib_Ga = Calibration("Ga", rheed_filename="2017-06-30_Ga.txt")
     calib_As = Calibration("As")
 

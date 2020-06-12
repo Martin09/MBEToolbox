@@ -111,6 +111,7 @@ class Calibration:
         :return: rheed calibration dataframe
         """
         print('Fetching RHEED calibration file: {}'.format(filename))
+        self.rheed_filename = filename
         rheed_data = self.read_file(filename)
         rheed_data.columns = ['BFM.P', 'Rate (A/s)']  # Rename dataframe columns
         return rheed_data

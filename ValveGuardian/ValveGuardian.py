@@ -1,9 +1,5 @@
-import sys, os
-
-sys.path.insert(1, os.path.join(sys.path[0], '..'))  # Add parent directory to path
-
-from recipe_helper import MBERecipe, ts_print
-from datetime import datetime, timedelta
+from recipe_helper import MBERecipe
+from datetime import datetime
 from time import sleep
 import numpy as np
 
@@ -23,7 +19,7 @@ def cool_down(mbe, cell):
 
     cn = "As" if cell.lower() == "as" else "Sb"  # Cell Name
 
-    ts_print("Opening the " + cn + " valve to 30%. Cooling it down...")
+    mbe.ts_print("Opening the " + cn + " valve to 30%. Cooling it down...")
 
     T_stdby_tank = 50
     T_stdby_cond = 50
@@ -83,9 +79,9 @@ if __name__ == "__main__":
             else:  # Valve is potentially in danger
                 if np.abs(temp_diff_As) < cracker_tolerance:  # Temperature is within tolerance, no problems
                     ref_time_As = currTime
-                    ts_print("As valve closed, temp within specified limits (temp is {:.0f}C).".format(temp_AsCracker))
+                    mbe.ts_print("As valve closed, temp within limits (temp is {:.0f}C).".format(temp_AsCracker))
                 else:  # Temperature is outside of tolerance, might need to intervene
-                    ts_print("As valve closed, temp outside of limits (temp is {:.0f}C)!!!".format(
+                    mbe.ts_print("As valve closed, temp outside of limits (temp is {:.0f}C)!!!".format(
                         temp_AsCracker))  # Intervene only if less than 10min has passes since last check and if temperature diff is below 100
                     # if temp diff is above 100, its better not to move the Sb valve. Heat it up again and open it later
                     if temp_diff_As < 60 * 10 and np.abs(temp_diff_As) < 100:
@@ -96,18 +92,18 @@ if __name__ == "__main__":
                 ref_time_Sb = currTime
                 ref_temp_SbCracker = temp_SbCracker
                 valve_safe_Sb = True
-                ts_print("Sb valve open, valve is safe.")
+                mbe.ts_print("Sb valve open, valve is safe.")
             else:  # Valve is potentially in danger
                 if np.abs(temp_diff_Sb) < cracker_tolerance:  # Temperature is within tolerance, no problems
                     ref_time_Sb = currTime
-                    ts_print("Sb valve closed, temp within specified limits (temp is {:.0f}C).".format(temp_SbCracker))
+                    mbe.ts_print("Sb valve closed, temp within limits (temp is {:.0f}C).".format(temp_SbCracker))
                 else:  # Temperature is outside of tolerance, might need to intervene
-                    ts_print("Sb valve closed, temp outside of limits (temp is {:.0f}C)!!!".format(temp_SbCracker))
+                    mbe.ts_print("Sb valve closed, temp outside of limits (temp is {:.0f}C)!!!".format(temp_SbCracker))
                     # Intervene only if less than 10min has passes since last check and if temperature diff is below 100
                     # if temp diff is above 100, its better not to move the Sb valve. Heat it up again and open it later
                     if temp_diff_Sb < 60 * 10 and np.abs(temp_diff_Sb) < 100:
                         cool_down(mbe, "Sb")
                         pass
 
-            ts_print("Sleeping for 10s...")
+            mbe.ts_print("Sleeping for 10s...")
             sleep(10)

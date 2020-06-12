@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="189b52a1-a303-4fa6-a924-de967f4ee635" name="Default Changelist" comment="" />
+    <list default="true" id="189b52a1-a303-4fa6-a924-de967f4ee635" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth/D1-18-05-23-D- Sq4 - 100 GaAs NM - Low GR - 700C FTR 80.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth/D1-18-05-25-A- Sq5 - 111 GaAs NM + InAs NW 0.2-110.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth/D1-18-06-05-D- Sq4 - 111&amp;100 GaAs LGR NM + InAs NW 0.2-110.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth/D1-18-07-11-A- Tr2 - 111 GaAs NM + InAs NW 0.2-110.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth/D1-18-07-12-D- Tr2 - 111 GaAs NM + InAs NW 0.2-110.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth/D1-18-09-03-B - Sq4 - 111 GaAs LGR NM + InAs NW 0.35-10 - CGC 10min.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth/D1-18-09-20-B - Sq4 - 100 GaAs LGR NM + InAs NW 0.35-10 - T710.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth/D1-18-09-21-B - Sq1 - 100 GaAs LGR NM + InAs NW 0.35-10 - FTR 160.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth/D1-18-10-08-A - Sq2 - 100 GaAs LGR NM - T -20.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth/D1-18-10-22-A - Sq4 - 30min NM Growth + 1000s Shell @ 550C GaAs Cap w Al Markers.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth/D1-18-11-04-A - Sq5 - 30min Mod-Doped NM + 600s Shell @ 450C GaAs Cap w Al Markers.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth/D1-18-11-07-C - Sq5 - 30min Mod-Doped NM + 600s Shell @ 450C GaAs Cap w Al Markers.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth/D1-19-04-XX-X - Ch2 - GaAs LGR NM + InAs NW 0.35-10 + 5nm GaAs Cap LT.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Recipes_Growth_Didem/D1-19-05-xx- - Ch - ARPES-  Doped GaAs LGR NM + InAs NW 0.35-10 + Capping.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/D1-19-04-23-X - Ch3 - GaAs LGR NM + InAs NW 0.35-10 + 5nm GaAs Cap LT.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/D1-19-05-02-D - Ch3 - GaAs LGR NM + InAs NW 0.35-10 + 10nm GaAs Cap LT.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/D1-19-08-05-B - 111 GaAs NM ModDop 6nm + Barrier 2nm + InAs 200s 0.2-110 - T+20.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Virtual_MBE_Output/Thumbs.db" beforeDir="false" afterPath="$PROJECT_DIR$/../Virtual_MBE_Output/Thumbs.db" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,13 +49,18 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/2018/D1-18-11-19-A - Ch1 - GaAs LGR NM + InAs NW 0.35-10 - 50-30.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="549">
+            <state relative-caret-position="901">
               <caret line="54" column="33" selection-start-line="54" selection-start-column="33" selection-end-line="54" selection-end-column="33" />
             </state>
           </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/D1-19-07-05-A - Sq2 - Anneal 630 + p-GaAs LGR NM T-20 + InAs NW - 2nm SL Wafer.py">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -42,7 +68,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="1932" />
@@ -54,6 +80,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -65,10 +92,10 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../Recipes_Growth_Didem" />
   </component>
   <component name="RecentsManager">
@@ -102,10 +129,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49945945" visible="true" weight="0.29985118" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49945945" visible="true" weight="0.29978925" />
       <window_info id="Structure" order="1" sideWeight="0.50054055" side_tool="true" weight="0.24960506" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -124,9 +151,6 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
   </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
-  </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/D1-19-04-03-A - Ch3 - GaAs LGR NM + InAs NW 0.35-10.py">
       <provider selected="true" editor-type-id="text-editor" />
@@ -134,11 +158,7 @@
     <entry file="file://$PROJECT_DIR$/../Recipes_Growth_Didem/D1-19-04-10-C - Ch2 - GaAs LGR NM + InAs NW 0.35-10.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/2018/D1-18-10-22-B - Sq2 - 30min NM Growth + 1000s Shell @ 650C GaAs Cap w Al Markers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-432" />
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/2018/D1-18-10-22-B - Sq2 - 30min NM Growth + 1000s Shell @ 650C GaAs Cap w Al Markers.py" />
     <entry file="file://$PROJECT_DIR$/2018/D1-18-10-21-A - Sq3 - 30min NM Growth + 1000s Shell @ 450C GaAs Cap w Al Markers.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -192,10 +212,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/2018/D1-18-11-19-A - Ch1 - GaAs LGR NM + InAs NW 0.35-10 - 50-30.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="549">
+        <state relative-caret-position="901">
           <caret line="54" column="33" selection-start-line="54" selection-start-column="33" selection-end-line="54" selection-end-column="33" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/D1-19-07-05-A - Sq2 - Anneal 630 + p-GaAs LGR NM T-20 + InAs NW - 2nm SL Wafer.py">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
 </project>

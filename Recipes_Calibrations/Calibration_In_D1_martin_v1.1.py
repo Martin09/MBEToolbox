@@ -8,7 +8,7 @@ import numpy as np
 # Script takes about 3min per value, would like to keep the total calibration to around 30 min, so 10 values
 
 # Short calibration
-values = np.linspace(830, 750, 8)
+values = np.linspace(830, 750, 9)
 # Long calibration
 # values = np.linspace(830, 770, 13)
 

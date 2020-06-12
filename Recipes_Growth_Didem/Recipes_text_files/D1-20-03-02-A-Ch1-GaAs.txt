@@ -1,0 +1,20 @@
+Parameters used for Annealing
+T_Anneal: 770 deg C 
+Time for annealing: 600.0s
+
+Parameters used for GaAs membrane growth
+T manipulator during GaAs: 770 Torr
+rate_ga_for gaas: 0.3 Torr
+T_Ga during GaAs membrane growth: 882 deg C
+p_as_gaas: 6.19e-06 Torr
+as_valve_gaas: 59.43%
+t_growth_gaas: 4166.7s
+
+Parameters used for InAs NW growth
+T manipulator during InAs: 642 Torr
+rate_in_for inas: 0.3 Torr
+T_In during InAs membrane growth:777 deg C
+p_as_inas: 8.84e-07 Torr
+as_valve_inas: 27.17%
+t_growth_inas: 1800.0s 
+

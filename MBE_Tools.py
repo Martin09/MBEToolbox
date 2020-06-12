@@ -15,7 +15,7 @@ from collections import OrderedDict
 import numpy as np
 from numpy import greater, bool8, uint8, uint32, float32, float64, ndarray, array, take, frombuffer, empty, hstack, \
     dtype
-from  PyQt4 import QtGui, QtCore
+#from  PyQt4 import QtGui, QtCore
 
 
 class StayAliveThread(threading.Thread):

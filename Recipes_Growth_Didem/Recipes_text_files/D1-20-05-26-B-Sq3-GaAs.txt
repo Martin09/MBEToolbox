@@ -1,0 +1,20 @@
+Parameters used for Annealing
+T_Anneal: 730 deg C 
+Time for annealing: 600.0s
+
+Parameters used for GaAs membrane growth
+T manipulator during GaAs: 730 Torr
+rate_ga_for gaas: 0.3 Torr
+T_Ga during GaAs membrane growth: 879 deg C
+p_as_gaas: 9.28e-06 Torr
+as_valve_gaas: 91.34%
+t_growth_gaas: 3333.3s
+
+BFM files used are:
+
+2020-05-05_14-32-44_Ga.txt
+2020-05-08_14-45-07_TCrck599_As.txt
+
+RHEED files used are:
+s
+2019-11-19_Ga.txt

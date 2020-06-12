@@ -1,0 +1,36 @@
+Parameters used for Annealing
+T_Anneal: 770 deg C 
+Time for annealing: 600.0s
+
+Parameters used for GaAs membrane growth
+T manipulator during GaAs: 770 Torr
+rate_ga_for gaas: 0.3 Torr
+T_Ga during GaAs membrane growth: 882 deg C
+p_as_gaas: 6.19e-06 Torr
+as_valve_gaas: 59.43%
+t_growth_gaas: 3850.0s
+
+Parameters used for InAs NW growth
+T manipulator during InAs: 660 Torr
+rate_in_for inas: 0.3 Torr
+T_In during InAs membrane growth:777 deg C
+p_as_inas: 8.84e-07 Torr
+as_valve_inas: 27.17%
+t_growth_inas: 1800.0s 
+
+Parameters used for GaAs passivation layer growth
+T manipulator during GaAs shell growth: 480 deg C
+T_Ga during GaAs passivation layer: 882 Torr
+p_as_gaas: 1.00e-05 Torr
+as_valve_gaas: 100.00%
+t_growth_gaas: 2000.0s
+thickness_gaas_shell: 200s
+
+BFM files used are:
+2020-01-20_11-19-03_In.txt
+2020-01-20_09-41-13_Ga.txt
+2020-01-20_13-39-30_TCrck599_As.txt
+
+RHEED files used are:
+2017-06-30_In.txt
+2019-11-19_Ga.txt
